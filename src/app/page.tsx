@@ -126,7 +126,7 @@ export default function DashboardPage() {
                 return (
                   <Link
                     key={project.id}
-                    href={`/${project.id}`}
+                    href={`/${project.slug}`}
                     className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/50 transition-colors"
                   >
                     <div className="flex items-center gap-3">

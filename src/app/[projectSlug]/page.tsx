@@ -7,22 +7,28 @@ import { TaskCard } from "@/components/task/TaskCard";
 import { TaskModal } from "@/components/task/TaskModal";
 import { CreateTaskModal } from "@/components/task/CreateTaskModal";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Trash2, Edit3 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { DeleteProjectConfirmModal } from "@/components/project/DeleteProjectConfirmModal";
+import { EditProjectModal } from "@/components/project/EditProjectModal";
+import { useRouter } from "next/navigation";
 
 interface ProjectPageProps {
-    params: Promise<{ projectId: string }>;
+    params: Promise<{ projectSlug: string }>;
 }
 
 const STATUS_COLUMNS: TaskStatus[] = ['New', 'In Progress', 'Review', 'Done'];
 
 export default function ProjectPage({ params }: ProjectPageProps) {
-    const { projectId } = use(params);
-    const { projects, tasks, currentUser, updateTask } = useStore();
+    const { projectSlug } = use(params);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const { projects, tasks, currentUser, updateTask, deleteProject } = useStore();
+    const router = useRouter();
 
     useEffect(() => {
         setIsClient(true);
@@ -30,8 +36,9 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
     if (!isClient) return null;
 
-    const project = projects.find(p => p.id === projectId);
-    const projectTasks = tasks.filter(t => t.projectId === projectId);
+    // Find project by slug
+    const project = projects.find(p => p.slug === projectSlug);
+    const projectTasks = project ? tasks.filter(t => t.projectId === project.id) : [];
 
     if (!project) {
         return (
@@ -66,6 +73,18 @@ export default function ProjectPage({ params }: ProjectPageProps) {
         updateTask(draggableId, { status: newStatus });
     };
 
+    const handleDeleteProject = async () => {
+        if (project) {
+            await deleteProject(project.id);
+            setIsDeleteModalOpen(false);
+            router.push("/");
+        }
+    };
+
+    const handleProjectRenamed = (newSlug: string) => {
+        router.push(`/${newSlug}`);
+    };
+
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-8">
@@ -73,12 +92,39 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
                     <p className="text-muted-foreground">{projectTasks.length} tasks</p>
                 </div>
-                {(currentUser.role === 'admin' || currentUser.role === 'dev') && (
-                    <Button onClick={handleCreateTask}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        New Task
-                    </Button>
-                )}
+                <div className="flex items-center gap-3">
+                    {currentUser.role === 'admin' && (
+                        <>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsEditModalOpen(true)}
+                                className="text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                <Plus className="w-5 h-5 rotate-45 scale-75 hidden" /> {/* spacer hack if needed */}
+                                <Trash2 className="hidden" /> {/* spacer hack if needed */}
+                                <Edit3 className="w-5 h-5" />
+                                <style jsx>{`
+                                    .rotate-45 { display: none; }
+                                `}</style>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsDeleteModalOpen(true)}
+                                className="text-muted-foreground hover:text-destructive transition-colors mr-2"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </Button>
+                        </>
+                    )}
+                    {(currentUser.role === 'admin' || currentUser.role === 'dev') && (
+                        <Button onClick={handleCreateTask}>
+                            <Plus className="w-4 h-4 mr-2" />
+                            New Task
+                        </Button>
+                    )}
+                </div>
             </div>
 
             <DragDropContext onDragEnd={onDragEnd}>
@@ -141,7 +187,21 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             <CreateTaskModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                projectId={projectId}
+                projectId={project.id}
+            />
+
+            <DeleteProjectConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteProject}
+                projectName={project.name}
+            />
+
+            <EditProjectModal
+                project={project}
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onSuccess={handleProjectRenamed}
             />
         </div>
     );

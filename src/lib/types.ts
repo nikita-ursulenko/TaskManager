@@ -21,6 +21,7 @@ export interface Task {
     // Dev fields
     evidence?: string; // Link to screenshot or hosted image
     notes?: string;
+    blockers?: string;
     // Metadata
     isPaid?: boolean;
     createdAt: string;
@@ -30,4 +31,5 @@ export interface Task {
 export interface Project {
     id: string;
     name: string;
+    slug: string;
 }

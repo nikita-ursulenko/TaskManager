@@ -17,6 +17,8 @@ interface AppState {
     addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
     updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
     deleteTask: (id: string) => Promise<void>;
+    deleteProject: (id: string) => Promise<void>;
+    updateProject: (id: string, name: string) => Promise<Project | void>;
 
     // Profile Actions
     setUserProfile: (profile: { name: string, role: Role }) => void;
@@ -49,21 +51,70 @@ export const useStore = create<AppState>()(
 
             addProject: async (name) => {
                 const supabase = createClient();
+                const slug = name.toLowerCase()
+                    .trim()
+                    .replace(/[^\w\s-]/g, '') // remove special chars
+                    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with a single dash
+                    .replace(/^-+|-+$/g, ''); // Trim dashes from ends
+
                 const { data, error } = await supabase
                     .from('projects')
-                    .insert([{ name }])
+                    .insert([{ name, slug }])
                     .select()
                     .single();
 
                 if (error) {
-                    console.error('Error adding project:', error);
-                    return;
+                    throw error;
                 }
 
                 if (data) {
                     set((state) => ({
                         projects: [...state.projects, data]
                     }));
+                }
+            },
+
+            deleteProject: async (id) => {
+                const supabase = createClient();
+                const { error } = await supabase
+                    .from('projects')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    throw error;
+                }
+
+                set((state) => ({
+                    projects: state.projects.filter((p) => p.id !== id),
+                    tasks: state.tasks.filter((t) => t.projectId !== id),
+                }));
+            },
+
+            updateProject: async (id, name) => {
+                const supabase = createClient();
+                const slug = name.toLowerCase()
+                    .trim()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+
+                const { data, error } = await supabase
+                    .from('projects')
+                    .update({ name, slug })
+                    .eq('id', id)
+                    .select()
+                    .single();
+
+                if (error) {
+                    throw error;
+                }
+
+                if (data) {
+                    set((state) => ({
+                        projects: state.projects.map((p) => p.id === id ? data : p)
+                    }));
+                    return data;
                 }
             },
 
@@ -81,6 +132,7 @@ export const useStore = create<AppState>()(
                         attachments: taskData.attachments,
                         evidence: taskData.evidence ? [taskData.evidence] : [],
                         notes: taskData.notes,
+                        blockers: taskData.blockers,
                         is_paid: taskData.isPaid || false
                     }])
                     .select()
@@ -103,6 +155,7 @@ export const useStore = create<AppState>()(
                         attachments: data.attachments || [],
                         evidence: data.evidence?.[0] || '',
                         notes: data.notes || '',
+                        blockers: data.blockers || '',
                         isPaid: data.is_paid,
                         createdAt: data.created_at,
                         updatedAt: data.updated_at
@@ -127,6 +180,7 @@ export const useStore = create<AppState>()(
                 if (updates.attachments !== undefined) dbUpdates.attachments = updates.attachments;
                 if (updates.evidence !== undefined) dbUpdates.evidence = updates.evidence ? [updates.evidence] : [];
                 if (updates.notes !== undefined) dbUpdates.notes = updates.notes;
+                if (updates.blockers !== undefined) dbUpdates.blockers = updates.blockers;
                 if (updates.isPaid !== undefined) dbUpdates.is_paid = updates.isPaid;
 
                 const { data, error } = await supabase
@@ -153,6 +207,7 @@ export const useStore = create<AppState>()(
                         attachments: data.attachments || [],
                         evidence: data.evidence?.[0] || '',
                         notes: data.notes || '',
+                        blockers: data.blockers || '',
                         isPaid: data.is_paid,
                         createdAt: data.created_at,
                         updatedAt: data.updated_at

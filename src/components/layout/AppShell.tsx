@@ -42,7 +42,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     .order('created_at', { ascending: true });
 
                 if (projectsData) {
-                    setProjects(projectsData);
+                    const projectsWithSlugs = projectsData.map(p => ({
+                        ...p,
+                        slug: p.slug || p.name.toLowerCase()
+                            .trim()
+                            .replace(/[^\w\s-]/g, '')
+                            .replace(/[\s_-]+/g, '-')
+                            .replace(/^-+|-+$/g, '')
+                    }));
+                    setProjects(projectsWithSlugs);
                 }
 
                 // Fetch Tasks
@@ -63,6 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         attachments: t.attachments || [],
                         evidence: t.evidence?.[0] || '',
                         notes: t.notes || '',
+                        blockers: t.blockers || '',
                         isPaid: t.is_paid,
                         createdAt: t.created_at,
                         updatedAt: t.updated_at

@@ -47,17 +47,17 @@ export function TaskModal({ task, isOpen, onClose, role }: TaskModalProps) {
     const generateReport = () => {
         const project = projects.find(p => p.id === editedTask.projectId)?.name || 'Unknown Project';
         const statusEmoji = {
-            'New': '🆕',
-            'In Progress': '🚧',
-            'Review': '👀',
-            'Done': '✅'
+            'New': '🆕 New',
+            'In Progress': '🚧 In Progress',
+            'Review': '👀 Review',
+            'Done': '✅ Done'
         }[editedTask.status];
 
-        const report = `✅ Task Report (from developer)\n` +
-            `Task #${editedTask.id.slice(0, 4)} – ${project}\n` +
-            `Status: ${statusEmoji} ${editedTask.status}\n` +
-            `What was done: ${editedTask.notes || 'No specific notes'}\n` +
-            `Evidence: ${editedTask.evidence || 'No evidence provided'}\n` +
+        const report = `Task #${editedTask.id.slice(0, 4)} – ${project}\n\n` +
+            `Status: ${statusEmoji}\n` +
+            `What was done: ${editedTask.notes || '-'}\n\n` +
+            `Evidence: ${editedTask.evidence || '-'}\n\n` +
+            `Notes / blockers: ${editedTask.blockers || '-'}\n\n` +
             `Payment: ${editedTask.budget} euro`;
 
         navigator.clipboard.writeText(report);
@@ -246,12 +246,22 @@ export function TaskModal({ task, isOpen, onClose, role }: TaskModalProps) {
                                     )}
 
                                     <div>
-                                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-2 px-1">Implementation Notes</label>
+                                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-2 px-1">What was done</label>
                                         <textarea
                                             value={editedTask.notes || ''}
                                             onChange={(e) => setEditedTask({ ...editedTask, notes: e.target.value })}
                                             className="w-full h-24 bg-muted/10 border border-transparent hover:border-border focus:border-primary focus:bg-background rounded-xl p-4 text-sm transition-all focus:outline-none resize-none"
-                                            placeholder="Summarize your work or list blockers..."
+                                            placeholder="What was done..."
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-2 px-1">Notes / Blockers</label>
+                                        <textarea
+                                            value={editedTask.blockers || ''}
+                                            onChange={(e) => setEditedTask({ ...editedTask, blockers: e.target.value })}
+                                            className="w-full h-24 bg-muted/10 border border-transparent hover:border-border focus:border-primary focus:bg-background rounded-xl p-4 text-sm transition-all focus:outline-none resize-none"
+                                            placeholder="List blockers or additional notes..."
                                         />
                                     </div>
                                 </div>

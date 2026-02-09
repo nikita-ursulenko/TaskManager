@@ -124,11 +124,11 @@ function SidebarContent({ onClose, isMobile }: { onClose?: () => void, isMobile?
                         {projects.map((project) => (
                             <Link
                                 key={project.id}
-                                href={`/${project.id}`}
+                                href={`/${project.slug}`}
                                 onClick={onClose}
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors",
-                                    pathname === `/${project.id}`
+                                    pathname === `/${project.slug}`
                                         ? "bg-accent text-accent-foreground"
                                         : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                                 )}
