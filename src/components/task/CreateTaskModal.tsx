@@ -14,7 +14,7 @@ interface CreateTaskModalProps {
 }
 
 export function CreateTaskModal({ isOpen, onClose, projectId }: CreateTaskModalProps) {
-    const { addTask, allProfiles } = useStore();
+    const { addTask, allProfiles, tasks } = useStore();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [budget, setBudget] = useState<number>(0);
@@ -43,6 +43,9 @@ export function CreateTaskModal({ isOpen, onClose, projectId }: CreateTaskModalP
         if (!title.trim()) return;
 
         setIsSubmitting(true);
+        const newColumnTasks = tasks.filter(t => t.projectId === projectId && t.status === 'New');
+        const maxPos = newColumnTasks.length > 0 ? Math.max(...newColumnTasks.map(t => t.position)) : 0;
+
         try {
             await addTask({
                 projectId,
@@ -50,7 +53,9 @@ export function CreateTaskModal({ isOpen, onClose, projectId }: CreateTaskModalP
                 description,
                 budget,
                 status: 'New',
+                position: maxPos + 1024,
                 attachments,
+                executionAttachments: [],
                 evidence: "",
                 notes: "",
                 isPaid: false,
