@@ -9,7 +9,7 @@ const scandiaMedium = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "TaskBlazar",
+  title: "Task Blazar",
   description: "Project management for Admin and Developers",
 };
 

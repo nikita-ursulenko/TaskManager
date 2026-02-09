@@ -115,7 +115,7 @@ function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: (
             <div className="p-6 border-b flex items-center justify-between">
                 <Link href="/" className="font-bold text-2xl tracking-tight flex items-center gap-3" onClick={onClose}>
                     <LayoutDashboard className="w-7 h-7 text-primary" />
-                    TaskBlazar
+                    Task Blazar
                 </Link>
                 {isMobile && (
                     <Button variant="ghost" size="icon" onClick={onClose}>
@@ -138,7 +138,7 @@ function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: (
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors",
                                     pathname === `/${project.slug}`
-                                        ? "bg-accent text-accent-foreground"
+                                        ? "bg-primary/10 text-primary shadow-[inset_0_0_10px_rgba(34,197,94,0.05)]"
                                         : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                                 )}
                             >

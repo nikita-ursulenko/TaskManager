@@ -108,7 +108,11 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                         }}
                         className="text-muted-foreground hover:text-primary transition-colors"
                     >
-                        <Info className="w-5 h-5" />
+                        {currentUser.role === 'admin' ? (
+                            <Edit3 className="w-5 h-5" />
+                        ) : (
+                            <Info className="w-5 h-5" />
+                        )}
                     </Button>
 
                     {currentUser.role === 'admin' && (
@@ -124,7 +128,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                         </>
                     )}
                     {(currentUser.role === 'admin' || currentUser.role === 'dev') && (
-                        <Button onClick={handleCreateTask}>
+                        <Button
+                            onClick={handleCreateTask}
+                            className="shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.4)] transition-all"
+                        >
                             <Plus className="w-4 h-4 mr-2" />
                             New Task
                         </Button>

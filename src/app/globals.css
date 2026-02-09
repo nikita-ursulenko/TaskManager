@@ -43,24 +43,27 @@
     --popover: hsl(240 10% 3.9%);
     --popover-foreground: hsl(0 0% 98%);
 
-    --primary: hsl(0 0% 98%);
-    --primary-foreground: hsl(240 5.9% 10%);
+    --primary: hsl(142 76% 56%);
+    --primary-foreground: hsl(142 76% 5%);
 
-    --secondary: hsl(240 3.7% 15.9%);
+    --secondary: hsl(240 3.7% 10%);
     --secondary-foreground: hsl(0 0% 98%);
 
-    --muted: hsl(240 3.7% 15.9%);
+    --muted: hsl(240 3.7% 10%);
     --muted-foreground: hsl(240 5% 64.9%);
 
-    --accent: hsl(240 3.7% 15.9%);
-    --accent-foreground: hsl(0 0% 98%);
+    --accent: hsl(142 76% 56% / 0.1);
+    --accent-foreground: hsl(142 76% 56%);
 
     --destructive: hsl(0 62.8% 30.6%);
     --destructive-foreground: hsl(0 0% 98%);
 
-    --border: hsl(240 3.7% 15.9%);
-    --input: hsl(240 3.7% 15.9%);
-    --ring: hsl(240 4.9% 83.9%);
+    --border: hsl(142 76% 56% / 0.1);
+    --input: hsl(142 76% 56% / 0.05);
+    --ring: hsl(142 76% 56%);
+
+    --neon-green: hsl(142 76% 56%);
+    --neon-glow: hsla(142, 76%, 56%, 0.15);
   }
 }
 
@@ -70,6 +73,9 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    background-image: radial-gradient(circle at 100% 0%, hsla(142, 76%, 56%, 0.03), transparent 25%),
+      radial-gradient(circle at 0% 100%, hsla(142, 76%, 56%, 0.02), transparent 25%);
+    background-attachment: fixed;
   }
 }
