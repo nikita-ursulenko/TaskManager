@@ -4,7 +4,7 @@ import { useStore } from "@/lib/store";
 import { formatCurrency, cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, CheckCircle2, Circle, Clock, LayoutDashboard, Folder } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Circle, Clock, LayoutDashboard, Folder, Wallet, Receipt, CreditCard, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -23,6 +23,14 @@ export default function DashboardPage() {
   const pendingTasks = tasks.filter(t => t.status !== 'Done').length;
   const recentTasks = [...tasks].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).slice(0, 5);
 
+  const isAdmin = currentUser.role === 'admin';
+
+  // Admin Metrics
+  const totalExpenses = tasks.reduce((sum, t) => sum + (t.budget || 0), 0);
+  const totalPaid = tasks.filter(t => t.isPaid).reduce((sum, t) => sum + (t.budget || 0), 0);
+  const totalDebt = tasks.filter(t => !t.isPaid).reduce((sum, t) => sum + (t.budget || 0), 0);
+  const unpaidDoneCount = tasks.filter(t => t.status === 'Done' && !t.isPaid).length;
+
   return (
     <div className="space-y-8">
       <div>
@@ -31,44 +39,103 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{projects.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
-            <Circle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{pendingTasks}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-green-500">{doneTasks}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">
-              {totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0}%
-            </div>
-          </CardContent>
-        </Card>
+        {isAdmin ? (
+          <>
+            <Card className="relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                <Wallet className="w-12 h-12" />
+              </div>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+                <Wallet className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{formatCurrency(totalExpenses)}</div>
+                <p className="text-xs text-muted-foreground mt-1">all project budgets</p>
+              </CardContent>
+            </Card>
+            <Card className="relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+              </div>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Debt</CardTitle>
+                <CreditCard className="h-4 w-4 text-destructive" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-destructive">{formatCurrency(totalDebt)}</div>
+                <p className="text-xs text-muted-foreground mt-1">outstanding payments</p>
+              </CardContent>
+            </Card>
+            <Card className="relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                <Receipt className="w-12 h-12 text-green-500" />
+              </div>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+                <Receipt className="h-4 w-4 text-green-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-green-500">{formatCurrency(totalPaid)}</div>
+                <p className="text-xs text-muted-foreground mt-1">transferred to devs</p>
+              </CardContent>
+            </Card>
+            <Card className="relative overflow-hidden group border-orange-500/20 bg-orange-500/5">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                <Clock className="w-12 h-12 text-orange-500" />
+              </div>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Ready to Pay</CardTitle>
+                <Clock className="h-4 w-4 text-orange-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-orange-500">{unpaidDoneCount}</div>
+                <p className="text-xs text-muted-foreground mt-1">completed but unpaid</p>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+                <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{projects.length}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
+                <Circle className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{pendingTasks}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Completed</CardTitle>
+                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-green-500">{doneTasks}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">
+                  {totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0}%
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
@@ -102,8 +169,16 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold">{formatCurrency(task.budget)}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(task.updatedAt).toLocaleDateString()}</p>
+                      <p className={cn("text-sm font-bold", task.isPaid ? "text-green-500" : "text-destructive")}>
+                        {formatCurrency(task.budget)}
+                      </p>
+                      <Badge variant="outline" className={cn("text-[10px] uppercase font-bold px-1.5 py-0", {
+                        'border-green-500/50 text-green-500 bg-green-500/5': task.isPaid,
+                        'border-destructive/50 text-destructive bg-destructive/5': !task.isPaid && task.status === 'Done',
+                        'border-muted text-muted-foreground': !task.isPaid && task.status !== 'Done'
+                      })}>
+                        {task.isPaid ? 'Paid' : (task.status === 'Done' ? 'Unpaid' : 'Pending')}
+                      </Badge>
                     </div>
                   </div>
                 );
