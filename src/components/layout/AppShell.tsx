@@ -213,8 +213,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
             <main
                 className={cn(
-                    "flex-1 transition-all duration-300 ease-in-out p-4 md:p-10 h-screen pt-24 pb-10",
-                    isSidebarOpen ? "md:ml-72 md:pt-10" : "md:ml-0 md:pt-24"
+                    "flex-1 transition-all duration-300 ease-in-out p-4 md:p-10 h-screen pt-24 pb-10 overflow-x-hidden",
+                    isSidebarOpen ? "md:pl-80 md:pt-10" : "md:pl-10 md:pt-24"
                 )}
             >
                 {!isSidebarOpen && (
@@ -225,7 +225,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     </div>
                 )}
 
-                <div className="max-w-7xl mx-auto h-full">
+                <div className="w-full h-full">
                     {children}
                 </div>
             </main>

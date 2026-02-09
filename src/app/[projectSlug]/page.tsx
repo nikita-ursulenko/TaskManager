@@ -128,7 +128,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
                     <p className="text-muted-foreground">{projectTasks.length} tasks</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-secondary/10 p-1.5 rounded-2xl border border-white/5 backdrop-blur-sm shadow-xl relative overflow-hidden group/container">
+                    {/* Subtle sliding glow effect for the header actions */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover/container:translate-x-full transition-transform duration-1000 ease-in-out" />
+
                     <Button
                         variant="ghost"
                         size="icon"
@@ -139,7 +142,8 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                                 setIsDetailsModalOpen(true);
                             }
                         }}
-                        className="text-muted-foreground hover:text-primary transition-colors"
+                        className="w-10 h-10 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 relative z-10"
+                        title={currentUser.role === 'admin' ? "Edit Project" : "Project Info"}
                     >
                         {currentUser.role === 'admin' ? (
                             <Edit3 className="w-5 h-5" />
@@ -149,23 +153,25 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     </Button>
 
                     {currentUser.role === 'admin' && (
-                        <>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setIsDeleteModalOpen(true)}
-                                className="text-muted-foreground hover:text-destructive transition-colors mr-2"
-                            >
-                                <Trash2 className="w-5 h-5" />
-                            </Button>
-                        </>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsDeleteModalOpen(true)}
+                            className="w-10 h-10 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300 relative z-10"
+                            title="Delete Project"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
                     )}
+
+                    <div className="w-px h-6 bg-white/10 mx-1 relative z-10" />
+
                     {(currentUser.role === 'admin' || currentUser.role === 'dev') && (
                         <Button
                             onClick={handleCreateTask}
-                            className="shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.4)] transition-all"
+                            className="h-10 px-5 rounded-xl bg-primary text-primary-foreground font-bold shadow-[0_0_20px_rgba(34,197,94,0.2)] hover:shadow-[0_0_30px_rgba(34,197,94,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 relative z-10"
                         >
-                            <Plus className="w-4 h-4 mr-2" />
+                            <Plus className="w-4 h-4 mr-2 stroke-[3px]" />
                             New Task
                         </Button>
                     )}
