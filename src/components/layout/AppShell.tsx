@@ -8,10 +8,20 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Task } from "@/lib/types";
+import { Task, Comment, Notification } from "@/lib/types";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-    const { isSidebarOpen, toggleSidebar, setUserProfile, setProjects, setTasks, currentUser } = useStore();
+    const {
+        isSidebarOpen,
+        toggleSidebar,
+        setUserProfile,
+        setProjects,
+        setTasks,
+        setAllProfiles,
+        setComments,
+        setNotifications,
+        currentUser
+    } = useStore();
     const [isClient, setIsClient] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const pathname = usePathname();
@@ -32,7 +42,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     .single();
 
                 if (profile) {
-                    setUserProfile({ name: profile.full_name || user.email || '', role: profile.role || 'dev' });
+                    setUserProfile({ id: user.id, name: profile.full_name || user.email || '', role: profile.role || 'dev' });
+                }
+
+                // Fetch All Profiles (for task assignment)
+                const { data: allProfilesData } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, role');
+
+                if (allProfilesData) {
+                    setAllProfiles(allProfilesData.map(p => ({
+                        id: p.id,
+                        name: p.full_name || '',
+                        role: p.role
+                    })));
                 }
 
                 // Fetch Projects
@@ -78,10 +101,48 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         notes: t.notes || '',
                         blockers: t.blockers || '',
                         isPaid: t.is_paid,
+                        assigneeId: t.assignee_id,
+                        reviewerId: t.reviewer_id,
+                        observerId: t.observer_id,
                         createdAt: t.created_at,
                         updatedAt: t.updated_at
                     }));
                     setTasks(formattedTasks);
+                }
+
+                // Fetch Comments
+                const { data: commentsData } = await supabase
+                    .from('comments')
+                    .select('*')
+                    .order('created_at', { ascending: true });
+
+                if (commentsData) {
+                    setComments(commentsData.map(c => ({
+                        id: c.id,
+                        taskId: c.task_id,
+                        userId: c.user_id,
+                        content: c.content,
+                        parentId: c.parent_id,
+                        createdAt: c.created_at
+                    })));
+                }
+
+                // Fetch Notifications
+                const { data: notificationsData } = await supabase
+                    .from('notifications')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (notificationsData) {
+                    setNotifications(notificationsData.map(n => ({
+                        id: n.id,
+                        userId: n.user_id,
+                        taskId: n.task_id,
+                        content: n.content,
+                        isRead: n.is_read,
+                        type: n.type,
+                        createdAt: n.created_at
+                    })));
                 }
             }
             setIsLoading(false);
@@ -92,9 +153,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
                 fetchData();
             } else if (event === 'SIGNED_OUT') {
-                // Clear state on sign out if needed, though redirect usually handles it
                 setProjects([]);
                 setTasks([]);
+                setComments([]);
+                setNotifications([]);
                 setIsLoading(false);
             }
         });
@@ -102,10 +164,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         // Initial check if we already have a session
         fetchData();
 
+        // Refresh on window focus to keep data (notifications) fresh
+        const handleFocus = () => fetchData();
+        window.addEventListener('focus', handleFocus);
+
         return () => {
             subscription.unsubscribe();
+            window.removeEventListener('focus', handleFocus);
         };
-    }, [setUserProfile, setProjects, setTasks]);
+    }, [setUserProfile, setProjects, setTasks, setAllProfiles, setComments, setNotifications]);
 
     const isLoginPage = pathname === "/login";
 
@@ -140,17 +207,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
-            {/* Sidebar is now controlled by the shell */}
             <Sidebar />
 
-            {/* Main Content Area */}
             <main
                 className={cn(
-                    "flex-1 transition-all duration-300 ease-in-out p-4 md:p-10 overflow-y-auto h-screen pt-24",
+                    "flex-1 transition-all duration-300 ease-in-out p-4 md:p-10 h-screen pt-24 pb-10",
                     isSidebarOpen ? "md:ml-72 md:pt-10" : "md:ml-0 md:pt-24"
                 )}
             >
-                {/* Toggle Button for Desktop (when closed) */}
                 {!isSidebarOpen && (
                     <div className="hidden md:block fixed top-6 left-6 z-50">
                         <Button variant="outline" size="icon" onClick={toggleSidebar}>
@@ -159,7 +223,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     </div>
                 )}
 
-                {children}
+                <div className="max-w-7xl mx-auto h-full">
+                    {children}
+                </div>
             </main>
         </div>
     );

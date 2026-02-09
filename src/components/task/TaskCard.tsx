@@ -1,5 +1,6 @@
 import { Task } from "@/lib/types";
 import { formatCurrency, cn } from "@/lib/utils";
+import { useStore } from "@/lib/store";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Paperclip, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
@@ -17,6 +18,9 @@ const statusColors = {
 };
 
 export function TaskCard({ task, onClick }: TaskCardProps) {
+    const { allProfiles } = useStore();
+    const assignee = allProfiles.find(p => p.id === task.assigneeId);
+
     return (
         <motion.div
             layoutId={task.id}
@@ -52,8 +56,16 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
                         </div>
                     )}
                 </div>
-                <div className="font-bold text-foreground text-base">
-                    {formatCurrency(task.budget)}
+                <div className="flex items-center gap-3">
+                    {assignee && (
+                        <div className="flex items-center gap-1.5 bg-muted/50 px-2 py-0.5 rounded-full text-[10px] font-bold border border-border/50">
+                            <span className="text-primary opacity-70">EXE</span>
+                            <span>{assignee.name.split(' ').map(n => n[0]).join('')}</span>
+                        </div>
+                    )}
+                    <div className="font-bold text-foreground text-base">
+                        {formatCurrency(task.budget)}
+                    </div>
                 </div>
             </div>
         </motion.div>

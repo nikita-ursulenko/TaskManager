@@ -5,7 +5,7 @@ import { Task, TaskStatus, Role } from "@/lib/types";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, ExternalLink, Link as LinkIcon, Download, Check, Calendar, Trash2, AlertCircle } from "lucide-react";
+import { X, ExternalLink, Link as LinkIcon, Download, Check, Calendar, Trash2, AlertCircle, User as UserIcon, ShieldCheck, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn, formatCurrency } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ interface TaskModalProps {
 const STATUS_OPTIONS: TaskStatus[] = ['New', 'In Progress', 'Review', 'Done'];
 
 export function TaskModal({ task, isOpen, onClose, role }: TaskModalProps) {
-    const { updateTask, deleteTask, projects } = useStore();
+    const { updateTask, deleteTask, projects, allProfiles } = useStore();
     const [editedTask, setEditedTask] = useState<Task | null>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -198,6 +198,61 @@ export function TaskModal({ task, isOpen, onClose, role }: TaskModalProps) {
                                     className="w-full h-32 bg-muted/20 border border-transparent hover:border-border focus:border-primary focus:bg-background rounded-xl p-4 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                                     placeholder="Task requirements..."
                                 />
+                            </div>
+
+                            {/* Roles Section */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-muted/10 p-4 rounded-xl border border-border/30">
+                                <div>
+                                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-1.5 px-1 flex items-center gap-1.5">
+                                        <UserIcon className="w-3 h-3" />
+                                        Исполнитель
+                                    </label>
+                                    <select
+                                        value={editedTask.assigneeId || ""}
+                                        onChange={(e) => setEditedTask({ ...editedTask, assigneeId: e.target.value || undefined })}
+                                        disabled={role !== 'admin'}
+                                        className="w-full bg-background border border-border/50 rounded-xl px-2 py-2 text-xs focus:ring-1 focus:ring-primary outline-none disabled:opacity-70 transition-all font-sans"
+                                    >
+                                        <option value="">Не назначен</option>
+                                        {allProfiles.map(p => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-1.5 px-1 flex items-center gap-1.5">
+                                        <ShieldCheck className="w-3 h-3 text-primary" />
+                                        Проверяющий
+                                    </label>
+                                    <select
+                                        value={editedTask.reviewerId || ""}
+                                        onChange={(e) => setEditedTask({ ...editedTask, reviewerId: e.target.value || undefined })}
+                                        disabled={role !== 'admin'}
+                                        className="w-full bg-background border border-border/50 rounded-xl px-2 py-2 text-xs focus:ring-1 focus:ring-primary outline-none disabled:opacity-70 transition-all font-sans"
+                                    >
+                                        <option value="">Не назначен</option>
+                                        {allProfiles.map(p => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-1.5 px-1 flex items-center gap-1.5">
+                                        <Eye className="w-3 h-3" />
+                                        Смотрящий
+                                    </label>
+                                    <select
+                                        value={editedTask.observerId || ""}
+                                        onChange={(e) => setEditedTask({ ...editedTask, observerId: e.target.value || undefined })}
+                                        disabled={role !== 'admin'}
+                                        className="w-full bg-background border border-border/50 rounded-xl px-2 py-2 text-xs focus:ring-1 focus:ring-primary outline-none disabled:opacity-70 transition-all font-sans"
+                                    >
+                                        <option value="">Не назначен</option>
+                                        {allProfiles.map(p => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             {/* Developer Section (Evidence & Notes) */}

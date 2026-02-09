@@ -14,13 +14,16 @@ import {
     Menu,
     X,
     ChevronLeft,
-    LogOut
+    LogOut,
+    Bell,
+    Settings
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ProjectModal } from "@/components/project/ProjectModal";
+import { NotificationCenter } from "./NotificationCenter";
 
 export function Sidebar() {
     const { isSidebarOpen, toggleSidebar, setSidebarOpen } = useStore();
@@ -182,22 +185,55 @@ function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: (
                 </div>
             </div>
 
-            <div className="p-6 border-t bg-card/30 mt-auto">
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                        <User className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-base font-medium truncate">{currentUser.name}</p>
-                        <p className="text-sm text-muted-foreground capitalize">{currentUser.role}</p>
-                    </div>
-                    <Button variant="ghost" size="icon" onClick={handleLogout} className="text-muted-foreground hover:text-foreground">
-                        <LogOut className="w-5 h-5" />
-                    </Button>
-                </div>
+            <div className="mt-auto p-4 border-t border-border/10">
+                <div className="relative p-4 rounded-3xl bg-secondary/10 border border-white/5 shadow-2xl group overflow-hidden">
+                    {/* Subtle Glow Background */}
+                    <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary/10 blur-3xl rounded-full" />
 
-                <div className="flex gap-3 mt-2">
-                    {/* Role toggle removed as per user request */}
+                    <div className="flex items-center gap-4 relative z-10">
+                        <div className="relative">
+                            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary/20 to-primary/40 flex items-center justify-center border border-primary/30 shadow-lg shadow-primary/5">
+                                <span className="text-xs font-black text-primary">
+                                    {currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase() : '?'}
+                                </span>
+                            </div>
+                            {/* Online Status Dot */}
+                            <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-background shadow-lg" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                            <h4 className="text-[13px] font-black text-foreground truncate tracking-tight">{currentUser.name}</h4>
+                            <div className="flex items-center gap-1.5 opacity-60">
+                                <div className="w-1 h-1 rounded-full bg-primary" />
+                                <span className="text-[9px] font-bold text-primary uppercase tracking-[0.2em]">{currentUser.role}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-5 pt-3 border-t border-white/5 relative z-10">
+                        <div className="flex items-center gap-1">
+                            <NotificationCenter />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => router.push('/settings')}
+                                className="w-9 h-9 rounded-xl hover:bg-white/5 text-muted-foreground hover:text-white transition-all group/btn"
+                                title="Account Settings"
+                            >
+                                <Settings className="w-4 h-4 group-hover/btn:rotate-45 transition-transform duration-300" />
+                            </Button>
+                        </div>
+
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleLogout}
+                            className="w-9 h-9 rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+                            title="Log Out"
+                        >
+                            <LogOut className="w-4 h-4" />
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

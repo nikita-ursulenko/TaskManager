@@ -137,7 +137,11 @@ export default function DashboardPage() {
               {recentTasks.map(task => {
                 const project = projects.find(p => p.id === task.projectId);
                 return (
-                  <div key={task.id} className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg transition-colors">
+                  <Link
+                    key={task.id}
+                    href={`/${project?.slug}/task/${task.id}`}
+                    className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg transition-colors group/task"
+                  >
                     <div className="flex items-center gap-4">
                       <div className={cn("w-2 h-2 rounded-full", {
                         'bg-blue-500': task.status === 'New',
@@ -146,7 +150,7 @@ export default function DashboardPage() {
                         'bg-green-500': task.status === 'Done'
                       })} />
                       <div className="space-y-1">
-                        <p className="text-sm font-medium leading-none">{task.title}</p>
+                        <p className="text-sm font-medium leading-none group-hover/task:text-primary transition-colors">{task.title}</p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span className="font-mono text-xs">#{task.id.slice(0, 4)}</span>
                           <span>•</span>
@@ -166,7 +170,7 @@ export default function DashboardPage() {
                         {task.isPaid ? 'Paid' : (task.status === 'Done' ? 'Unpaid' : 'Pending')}
                       </Badge>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

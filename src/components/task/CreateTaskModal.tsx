@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
-import { X, ClipboardList } from "lucide-react";
+import { X, ClipboardList, User as UserIcon, ShieldCheck, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CreateTaskModalProps {
@@ -13,10 +13,13 @@ interface CreateTaskModalProps {
 }
 
 export function CreateTaskModal({ isOpen, onClose, projectId }: CreateTaskModalProps) {
-    const { addTask } = useStore();
+    const { addTask, allProfiles } = useStore();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [budget, setBudget] = useState<number>(0);
+    const [assigneeId, setAssigneeId] = useState<string>("");
+    const [reviewerId, setReviewerId] = useState<string>("");
+    const [observerId, setObserverId] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -34,11 +37,17 @@ export function CreateTaskModal({ isOpen, onClose, projectId }: CreateTaskModalP
                 attachments: [],
                 evidence: "",
                 notes: "",
-                isPaid: false
+                isPaid: false,
+                assigneeId: assigneeId || undefined,
+                reviewerId: reviewerId || undefined,
+                observerId: observerId || undefined
             });
             setTitle("");
             setDescription("");
             setBudget(0);
+            setAssigneeId("");
+            setReviewerId("");
+            setObserverId("");
             onClose();
         } catch (error) {
             console.error("Failed to create task:", error);
@@ -107,6 +116,60 @@ export function CreateTaskModal({ isOpen, onClose, projectId }: CreateTaskModalP
                                                 className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-base transition-all outline-none font-mono"
                                                 disabled={isSubmitting}
                                             />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                                                <UserIcon className="w-3.5 h-3.5" />
+                                                Исполнитель
+                                            </label>
+                                            <select
+                                                value={assigneeId}
+                                                onChange={(e) => setAssigneeId(e.target.value)}
+                                                className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-3 py-2 text-sm transition-all outline-none font-sans"
+                                                disabled={isSubmitting}
+                                            >
+                                                <option value="">Не назначен</option>
+                                                {allProfiles.map(p => (
+                                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                                                <ShieldCheck className="w-3.5 h-3.5" />
+                                                Проверяющий
+                                            </label>
+                                            <select
+                                                value={reviewerId}
+                                                onChange={(e) => setReviewerId(e.target.value)}
+                                                className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-3 py-2 text-sm transition-all outline-none font-sans"
+                                                disabled={isSubmitting}
+                                            >
+                                                <option value="">Не назначен</option>
+                                                {allProfiles.map(p => (
+                                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                                                <Eye className="w-3.5 h-3.5" />
+                                                Смотрящий
+                                            </label>
+                                            <select
+                                                value={observerId}
+                                                onChange={(e) => setObserverId(e.target.value)}
+                                                className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-3 py-2 text-sm transition-all outline-none font-sans"
+                                                disabled={isSubmitting}
+                                            >
+                                                <option value="">Не назначен</option>
+                                                {allProfiles.map(p => (
+                                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                                ))}
+                                            </select>
                                         </div>
                                     </div>
 

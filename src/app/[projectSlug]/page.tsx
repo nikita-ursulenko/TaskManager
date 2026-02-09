@@ -4,7 +4,6 @@ import { use, useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import { Task, TaskStatus } from "@/lib/types";
 import { TaskCard } from "@/components/task/TaskCard";
-import { TaskModal } from "@/components/task/TaskModal";
 import { CreateTaskModal } from "@/components/task/CreateTaskModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Edit3 } from "lucide-react";
@@ -28,8 +27,6 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
-    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const { projects, tasks, currentUser, updateTask, deleteProject } = useStore();
     const router = useRouter();
 
@@ -56,8 +53,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     };
 
     const handleTaskClick = (task: Task) => {
-        setSelectedTask(task);
-        setIsModalOpen(true);
+        router.push(`/${projectSlug}/task/${task.id}`);
     };
 
     const onDragEnd = (result: DropResult) => {
@@ -189,12 +185,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                 </div>
             </DragDropContext>
 
-            <TaskModal
-                task={selectedTask}
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                role={currentUser.role}
-            />
+            {/* Task View Modals are now replaced by individual pages */}
 
             <CreateTaskModal
                 isOpen={isCreateModalOpen}

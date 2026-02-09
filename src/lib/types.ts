@@ -24,6 +24,9 @@ export interface Task {
     blockers?: string;
     // Metadata
     isPaid?: boolean;
+    assigneeId?: string;
+    reviewerId?: string;
+    observerId?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -36,4 +39,24 @@ export interface Project {
     vercelUrl?: string;
     githubUrl?: string;
     siteUrl?: string;
+}
+
+export interface Comment {
+    id: string;
+    taskId: string;
+    userId: string;
+    content: string;
+    parentId?: string; // Added for replies
+    createdAt: string;
+    userName?: string; // Opt-in join
+}
+
+export interface Notification {
+    id: string;
+    userId: string;
+    taskId?: string;
+    content: string;
+    isRead: boolean;
+    type: 'comment' | 'assignment' | 'status_change';
+    createdAt: string;
 }
