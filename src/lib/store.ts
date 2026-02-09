@@ -308,7 +308,11 @@ export const useStore = create<AppState>()(
                     console.error('Error deleting task:', error);
                     return;
                 }
-                set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }));
+                set((state) => ({
+                    tasks: state.tasks.filter((t) => t.id !== id),
+                    comments: state.comments.filter((c) => c.taskId !== id),
+                    notifications: state.notifications.filter((n) => n.taskId !== id)
+                }));
             },
 
             addComment: async (taskId, content, parentId) => {
