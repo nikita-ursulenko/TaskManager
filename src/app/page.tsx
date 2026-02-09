@@ -39,103 +39,89 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {isAdmin ? (
-          <>
-            <Card className="relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                <Wallet className="w-12 h-12" />
+        {/* Task Stats */}
+        <Card className="relative overflow-hidden group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
+            <Circle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{pendingTasks}</div>
+            <p className="text-xs text-muted-foreground mt-1">across {projects.length} projects</p>
+          </CardContent>
+        </Card>
+        <Card className="relative overflow-hidden group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completed</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-500">{doneTasks}</div>
+            <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+              <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-500 transition-all duration-500"
+                  style={{ width: `${totalTasks > 0 ? (doneTasks / totalTasks) * 100 : 0}%` }}
+                />
               </div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-                <Wallet className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{formatCurrency(totalExpenses)}</div>
-                <p className="text-xs text-muted-foreground mt-1">all project budgets</p>
-              </CardContent>
-            </Card>
-            <Card className="relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                <AlertCircle className="w-12 h-12 text-destructive" />
-              </div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Debt</CardTitle>
-                <CreditCard className="h-4 w-4 text-destructive" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-destructive">{formatCurrency(totalDebt)}</div>
-                <p className="text-xs text-muted-foreground mt-1">outstanding payments</p>
-              </CardContent>
-            </Card>
-            <Card className="relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                <Receipt className="w-12 h-12 text-green-500" />
-              </div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
-                <Receipt className="h-4 w-4 text-green-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-green-500">{formatCurrency(totalPaid)}</div>
-                <p className="text-xs text-muted-foreground mt-1">transferred to devs</p>
-              </CardContent>
-            </Card>
-            <Card className="relative overflow-hidden group border-orange-500/20 bg-orange-500/5">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                <Clock className="w-12 h-12 text-orange-500" />
-              </div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Ready to Pay</CardTitle>
-                <Clock className="h-4 w-4 text-orange-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-orange-500">{unpaidDoneCount}</div>
-                <p className="text-xs text-muted-foreground mt-1">completed but unpaid</p>
-              </CardContent>
-            </Card>
-          </>
-        ) : (
-          <>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-                <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{projects.length}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
-                <Circle className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{pendingTasks}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Completed</CardTitle>
-                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-green-500">{doneTasks}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
-                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">
-                  {totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0}%
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
+              {totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0}% rate
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Financial Stats */}
+        <Card className="relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+            <Wallet className="w-12 h-12" />
+          </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{isAdmin ? 'Total Expenses' : 'Total Budget'}</CardTitle>
+            <Wallet className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{formatCurrency(totalExpenses)}</div>
+            <p className="text-xs text-muted-foreground mt-1">overall financial volume</p>
+          </CardContent>
+        </Card>
+        <Card className="relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+            <AlertCircle className="w-12 h-12 text-destructive" />
+          </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{isAdmin ? 'Total Debt' : 'Outstanding'}</CardTitle>
+            <CreditCard className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-destructive">{formatCurrency(totalDebt)}</div>
+            <p className="text-xs text-muted-foreground mt-1">{isAdmin ? 'to be paid' : 'expected income'}</p>
+          </CardContent>
+        </Card>
+        <Card className="relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+            <Receipt className="w-12 h-12 text-green-500" />
+          </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{isAdmin ? 'Total Paid' : 'Received'}</CardTitle>
+            <Receipt className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-500">{formatCurrency(totalPaid)}</div>
+            <p className="text-xs text-muted-foreground mt-1">{isAdmin ? 'transferred to devs' : 'already in pocket'}</p>
+          </CardContent>
+        </Card>
+        <Card className="relative overflow-hidden group border-orange-500/20 bg-orange-500/5">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+            <Clock className="w-12 h-12 text-orange-500" />
+          </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{isAdmin ? 'Ready to Pay' : 'Ready for Payment'}</CardTitle>
+            <Clock className="h-4 w-4 text-orange-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-orange-500">{unpaidDoneCount}</div>
+            <p className="text-xs text-muted-foreground mt-1">completed but unpaid tasks</p>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">

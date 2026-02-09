@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'Scandia-Medium';
-  src: url('/font/Cascadia_Code/static/CascadiaCode-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-}
-
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -36,7 +29,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-sans: Scandia-Medium, "sans-serif";
+  --font-sans: var(--font-scandia), "sans-serif";
 }
 
 @layer base {
@@ -78,6 +71,5 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: Scandia-Medium, "sans-serif";
   }
 }
