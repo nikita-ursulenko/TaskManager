@@ -9,6 +9,11 @@ export interface User {
     avatar?: string;
 }
 
+export interface Attachment {
+    name: string;
+    url: string;
+}
+
 export interface Task {
     id: string;
     projectId: string; // Foreign key to Project
@@ -17,7 +22,8 @@ export interface Task {
     budget: number; // in Euro
     deadline?: string; // ISO date string
     status: TaskStatus;
-    attachments: string[]; // URLs of attached images
+    attachments: Attachment[]; // Labeled URLs (Requirements)
+    executionAttachments?: Attachment[]; // Labeled URLs (Evidence)
     // Dev fields
     evidence?: string; // Link to screenshot or hosted image
     notes?: string;

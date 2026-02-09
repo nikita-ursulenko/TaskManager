@@ -18,12 +18,14 @@ import {
     Eye,
     Save,
     FileText,
-    Terminal
+    Terminal,
+    Plus
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn, formatCurrency } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CommentSection } from "@/components/task/CommentSection";
+import { Attachment } from "@/lib/types";
 
 interface TaskPageProps {
     params: Promise<{ projectSlug: string; taskId: string }>;
@@ -90,10 +92,18 @@ export default function TaskPage({ params }: TaskPageProps) {
             'Done': hasBlockers ? '⚠️ Done with note' : '✅ Done'
         }[editedTask.status];
 
+        const reqStr = editedTask.attachments?.length
+            ? '\n\nAttachments:\n' + editedTask.attachments.map(a => `• ${a.name}: ${a.url || 'No URL'}`).join('\n')
+            : '';
+
+        const execStr = editedTask.executionAttachments?.length
+            ? '\n\nExecution Attachments:\n' + editedTask.executionAttachments.map(a => `• ${a.name}: ${a.url || 'No URL'}`).join('\n')
+            : '';
+
         const report = `Task #${editedTask.id.slice(0, 4)} – ${project.name}\n\n` +
             `Status: ${statusLabel}\n` +
             `What was done: ${editedTask.notes || '-'}\n\n` +
-            `Evidence: ${editedTask.evidence || '-'}\n\n` +
+            `Evidence: ${editedTask.evidence || '-'}${reqStr}${execStr}\n\n` +
             `Notes / blockers: ${editedTask.blockers || '-'}\n\n` +
             `Payment: ${editedTask.budget} Euro`;
 
@@ -192,6 +202,24 @@ export default function TaskPage({ params }: TaskPageProps) {
                             <div className="flex items-center gap-2 px-1 relative">
                                 <FileText className="w-4 h-4 text-primary" />
                                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Requirements & Context</h3>
+
+                                {/* Linkable Attachments Shortcuts */}
+                                <div className="ml-auto flex gap-2">
+                                    {editedTask.attachments?.map((att, i) => (
+                                        <button
+                                            key={i}
+                                            type="button"
+                                            onClick={() => {
+                                                const tag = `[${att.name}]`;
+                                                setEditedTask({ ...editedTask, description: editedTask.description + (editedTask.description ? '\n' : '') + tag });
+                                            }}
+                                            className="text-[9px] bg-primary/10 hover:bg-primary/20 text-primary px-2 py-0.5 rounded-full border border-primary/20 transition-all font-bold"
+                                            title="Click to add reference to description"
+                                        >
+                                            + {att.name}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
                             <textarea
@@ -200,6 +228,92 @@ export default function TaskPage({ params }: TaskPageProps) {
                                 className="w-full h-48 bg-transparent border-0 focus:ring-0 text-lg transition-all focus:outline-none resize-none leading-relaxed px-0"
                                 placeholder="What needs to be done? List requirements and expectations..."
                             />
+
+                            {/* RESOURCES LIST AT THE END OF DESCRIPTION */}
+                            {editedTask.attachments && editedTask.attachments.length > 0 && (
+                                <div className="mt-8 pt-8 border-t border-border/50 space-y-4">
+                                    <div className="flex items-center justify-between px-1">
+                                        <div className="flex items-center gap-2">
+                                            <LinkIcon className="w-3.5 h-3.5 text-primary" />
+                                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Attachments</h4>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                const newAtts = [...(editedTask.attachments || [])];
+                                                newAtts.push({ name: `Attachment ${newAtts.length + 1}`, url: '' });
+                                                setEditedTask({ ...editedTask, attachments: newAtts });
+                                            }}
+                                            className="text-[9px] text-primary hover:underline font-extrabold uppercase tracking-tighter"
+                                        >
+                                            + Add Attachment
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {editedTask.attachments.map((att, i) => (
+                                            <div key={i} className="flex gap-2 items-center bg-background/40 border border-border/30 p-3 rounded-2xl group transition-all hover:border-primary/30 hover:bg-background/60">
+                                                <div className="flex-1 flex flex-col gap-0.5 min-w-0">
+                                                    <input
+                                                        type="text"
+                                                        value={att.name}
+                                                        onChange={(e) => {
+                                                            const newAtts = [...editedTask.attachments];
+                                                            newAtts[i] = { ...newAtts[i], name: e.target.value };
+                                                            setEditedTask({ ...editedTask, attachments: newAtts });
+                                                        }}
+                                                        className="bg-transparent border-0 focus:ring-0 text-[11px] font-black outline-none truncate h-4"
+                                                        placeholder="Label"
+                                                    />
+                                                    <div className="flex gap-2 items-center">
+                                                        <input
+                                                            type="text"
+                                                            value={att.url}
+                                                            onChange={(e) => {
+                                                                const newAtts = [...editedTask.attachments];
+                                                                newAtts[i] = { ...newAtts[i], url: e.target.value };
+                                                                setEditedTask({ ...editedTask, attachments: newAtts });
+                                                            }}
+                                                            className="flex-1 bg-transparent border-0 focus:ring-0 text-[9px] outline-none truncate text-muted-foreground/60 focus:text-primary transition-colors h-4"
+                                                            placeholder="URL"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-1 shrink-0">
+                                                    {att.url && (
+                                                        <Button size="icon" variant="ghost" className="h-8 w-8 rounded-xl hover:bg-primary/20 text-primary" asChild>
+                                                            <a href={att.url} target="_blank" rel="noopener noreferrer">
+                                                                <ExternalLink className="w-3.5 h-3.5" />
+                                                            </a>
+                                                        </Button>
+                                                    )}
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                                        onClick={() => {
+                                                            const newAtts = editedTask.attachments.filter((_, idx) => idx !== i);
+                                                            setEditedTask({ ...editedTask, attachments: newAtts });
+                                                        }}
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* If no attachments, show a subtle add button */}
+                            {(!editedTask.attachments || editedTask.attachments.length === 0) && (
+                                <div className="mt-8 pt-6 border-t border-dashed border-border/30 text-center">
+                                    <button
+                                        onClick={() => setEditedTask({ ...editedTask, attachments: [{ name: 'Attachment 1', url: '' }] })}
+                                        className="text-[10px] text-muted-foreground hover:text-primary flex items-center gap-2 mx-auto transition-all font-bold uppercase tracking-widest"
+                                    >
+                                        <Plus className="w-3 h-3" /> Add Attachment
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </section>
 
@@ -239,21 +353,77 @@ export default function TaskPage({ params }: TaskPageProps) {
                                     </div>
                                 </div>
 
-                                {editedTask.attachments && editedTask.attachments.length > 0 && (
-                                    <div className="space-y-3">
-                                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">Attachments</label>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                            {editedTask.attachments.map((url, i) => (
-                                                <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="task-image-card group">
-                                                    <img src={url} alt="Reference" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
-                                                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                                        <ExternalLink className="w-6 h-6 text-white" />
-                                                    </div>
-                                                </a>
-                                            ))}
+                                {/* EXECUTION RESOURCES */}
+                                <div className="space-y-3 pt-4">
+                                    <div className="flex items-center justify-between px-1">
+                                        <div className="flex items-center gap-2">
+                                            <LinkIcon className="w-3.5 h-3.5 text-primary" />
+                                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Execution Attachments</h4>
                                         </div>
+                                        <button
+                                            onClick={() => {
+                                                const newAtts = [...(editedTask.executionAttachments || [])];
+                                                newAtts.push({ name: `Attachment ${newAtts.length + 1}`, url: '' });
+                                                setEditedTask({ ...editedTask, executionAttachments: newAtts });
+                                            }}
+                                            className="text-[9px] text-primary hover:underline font-extrabold uppercase tracking-tighter"
+                                        >
+                                            + Add Attachment
+                                        </button>
                                     </div>
-                                )}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {editedTask.executionAttachments?.map((att, i) => (
+                                            <div key={i} className="flex gap-2 items-center bg-background/40 border border-border/30 p-3 rounded-2xl group transition-all hover:border-primary/30 hover:bg-background/60">
+                                                <div className="flex-1 flex flex-col gap-0.5 min-w-0">
+                                                    <input
+                                                        type="text"
+                                                        value={att.name}
+                                                        onChange={(e) => {
+                                                            const newAtts = [...(editedTask.executionAttachments || [])];
+                                                            newAtts[i] = { ...newAtts[i], name: e.target.value };
+                                                            setEditedTask({ ...editedTask, executionAttachments: newAtts });
+                                                        }}
+                                                        className="bg-transparent border-0 focus:ring-0 text-[11px] font-black outline-none truncate h-4"
+                                                        placeholder="Label"
+                                                    />
+                                                    <div className="flex gap-2 items-center">
+                                                        <input
+                                                            type="text"
+                                                            value={att.url}
+                                                            onChange={(e) => {
+                                                                const newAtts = [...(editedTask.executionAttachments || [])];
+                                                                newAtts[i] = { ...newAtts[i], url: e.target.value };
+                                                                setEditedTask({ ...editedTask, executionAttachments: newAtts });
+                                                            }}
+                                                            className="flex-1 bg-transparent border-0 focus:ring-0 text-[9px] outline-none truncate text-muted-foreground/60 focus:text-primary transition-colors h-4"
+                                                            placeholder="URL"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-1 shrink-0">
+                                                    {att.url && (
+                                                        <Button size="icon" variant="ghost" className="h-8 w-8 rounded-xl hover:bg-primary/20 text-primary" asChild>
+                                                            <a href={att.url} target="_blank" rel="noopener noreferrer">
+                                                                <ExternalLink className="w-3.5 h-3.5" />
+                                                            </a>
+                                                        </Button>
+                                                    )}
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                                        onClick={() => {
+                                                            const newAtts = (editedTask.executionAttachments || []).filter((_, idx) => idx !== i);
+                                                            setEditedTask({ ...editedTask, executionAttachments: newAtts });
+                                                        }}
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-3">
@@ -278,7 +448,6 @@ export default function TaskPage({ params }: TaskPageProps) {
                             </div>
                         </div>
                     </section>
-
                 </div>
 
                 {/* Sidebar Details */}
@@ -418,6 +587,6 @@ export default function TaskPage({ params }: TaskPageProps) {
                     box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
                 }
             `}</style>
-        </motion.div >
+        </motion.div>
     );
 }
