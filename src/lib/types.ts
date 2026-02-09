@@ -22,6 +22,7 @@ export interface Task {
     budget: number; // in Euro
     deadline?: string; // ISO date string
     status: TaskStatus;
+    position: number;
     attachments: Attachment[]; // Labeled URLs (Requirements)
     executionAttachments?: Attachment[]; // Labeled URLs (Evidence)
     // Dev fields

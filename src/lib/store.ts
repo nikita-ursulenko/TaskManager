@@ -161,10 +161,12 @@ export const useStore = create<AppState>()(
                         budget: taskData.budget,
                         deadline: taskData.deadline,
                         attachments: taskData.attachments,
+                        execution_attachments: taskData.executionAttachments,
                         evidence: taskData.evidence ? [taskData.evidence] : [],
                         notes: taskData.notes,
                         blockers: taskData.blockers,
                         is_paid: taskData.isPaid || false,
+                        position: taskData.position || 0,
                         assignee_id: taskData.assigneeId,
                         reviewer_id: taskData.reviewerId,
                         observer_id: taskData.observerId
@@ -187,10 +189,12 @@ export const useStore = create<AppState>()(
                         budget: Number(data.budget) || 0,
                         deadline: data.deadline || undefined,
                         attachments: data.attachments || [],
+                        executionAttachments: data.execution_attachments || [],
                         evidence: data.evidence?.[0] || '',
                         notes: data.notes || '',
                         blockers: data.blockers || '',
                         isPaid: data.is_paid,
+                        position: data.position || 0,
                         assigneeId: data.assignee_id,
                         reviewerId: data.reviewer_id,
                         observerId: data.observer_id,
@@ -213,10 +217,12 @@ export const useStore = create<AppState>()(
                 if (updates.budget !== undefined) dbUpdates.budget = updates.budget;
                 if (updates.deadline !== undefined) dbUpdates.deadline = updates.deadline;
                 if (updates.attachments !== undefined) dbUpdates.attachments = updates.attachments;
+                if (updates.executionAttachments !== undefined) dbUpdates.execution_attachments = updates.executionAttachments;
                 if (updates.evidence !== undefined) dbUpdates.evidence = updates.evidence ? [updates.evidence] : [];
                 if (updates.notes !== undefined) dbUpdates.notes = updates.notes;
                 if (updates.blockers !== undefined) dbUpdates.blockers = updates.blockers;
                 if (updates.isPaid !== undefined) dbUpdates.is_paid = updates.isPaid;
+                if (updates.position !== undefined) dbUpdates.position = updates.position;
                 if (updates.assigneeId !== undefined) dbUpdates.assignee_id = updates.assigneeId;
                 if (updates.reviewerId !== undefined) dbUpdates.reviewer_id = updates.reviewerId;
                 if (updates.observerId !== undefined) dbUpdates.observer_id = updates.observerId;
@@ -243,10 +249,12 @@ export const useStore = create<AppState>()(
                         budget: Number(data.budget) || 0,
                         deadline: data.deadline || undefined,
                         attachments: data.attachments || [],
+                        executionAttachments: data.execution_attachments || [],
                         evidence: data.evidence?.[0] || '',
                         notes: data.notes || '',
                         blockers: data.blockers || '',
                         isPaid: data.is_paid,
+                        position: data.position || 0,
                         assigneeId: data.assignee_id,
                         reviewerId: data.reviewer_id,
                         observerId: data.observer_id,

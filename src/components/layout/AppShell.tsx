@@ -81,11 +81,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     setProjects(projectsWithSlugs);
                 }
 
-                // Fetch Tasks
                 const { data: tasksData } = await supabase
                     .from('tasks')
                     .select('*')
-                    .order('created_at', { ascending: true });
+                    .order('position', { ascending: true });
 
                 if (tasksData) {
                     const formattedTasks: Task[] = tasksData.map(t => ({
@@ -97,10 +96,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         budget: Number(t.budget) || 0,
                         deadline: t.deadline || undefined,
                         attachments: t.attachments || [],
+                        executionAttachments: t.execution_attachments || [],
                         evidence: t.evidence?.[0] || '',
                         notes: t.notes || '',
                         blockers: t.blockers || '',
                         isPaid: t.is_paid,
+                        position: t.position || 0,
                         assigneeId: t.assignee_id,
                         reviewerId: t.reviewer_id,
                         observerId: t.observer_id,

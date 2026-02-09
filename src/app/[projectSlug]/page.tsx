@@ -69,7 +69,44 @@ export default function ProjectPage({ params }: ProjectPageProps) {
         }
 
         const newStatus = destination.droppableId as TaskStatus;
-        updateTask(draggableId, { status: newStatus });
+
+        // Find the columns tasks
+        const filteredTasks = tasks.filter(t => t.projectId === project.id && t.status === newStatus);
+
+        // If moving within the same column, remove the dragged task first to get accurate neighbors
+        const otherTasks = destination.droppableId === source.droppableId
+            ? filteredTasks.filter(t => t.id !== draggableId)
+            : filteredTasks;
+
+        const sortedOthers = otherTasks.sort((a, b) => a.position - b.position);
+
+        // Calculate new position
+        let newPos: number;
+
+        if (sortedOthers.length === 0) {
+            newPos = 1024;
+        } else if (destination.index === 0) {
+            newPos = sortedOthers[0].position / 2;
+        } else if (destination.index >= sortedOthers.length) {
+            newPos = sortedOthers[sortedOthers.length - 1].position + 1024;
+        } else {
+            // Drop between two items
+            const prevTask = sortedOthers[destination.index - 1];
+            const nextTask = sortedOthers[destination.index];
+            newPos = (prevTask.position + nextTask.position) / 2;
+        }
+
+        // Optimistic local update to prevent jumping
+        const updatedTaskObj = tasks.find(t => t.id === draggableId);
+        if (updatedTaskObj) {
+            const newTask = { ...updatedTaskObj, status: newStatus, position: newPos };
+            useStore.setState({
+                tasks: tasks.map(t => t.id === draggableId ? newTask : t)
+            });
+        }
+
+        // Persistent update
+        updateTask(draggableId, { status: newStatus, position: newPos });
     };
 
     const handleDeleteProject = async () => {
@@ -139,7 +176,9 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                 <div className="flex-1 overflow-x-auto">
                     <div className="flex gap-6 min-w-max pb-4 h-full">
                         {STATUS_COLUMNS.map(status => {
-                            const columnTasks = projectTasks.filter(t => t.status === status);
+                            const columnTasks = projectTasks
+                                .filter(t => t.status === status)
+                                .sort((a, b) => a.position - b.position);
                             return (
                                 <Droppable droppableId={status} key={status}>
                                     {(provided) => (
