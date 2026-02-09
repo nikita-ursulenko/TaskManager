@@ -123,12 +123,16 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
-                    <p className="text-muted-foreground">{projectTasks.length} tasks</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 mt-2 md:mt-0">
+                <div className="space-y-1">
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">{project.name}</h1>
+                    <div className="flex items-center gap-2 uppercase tracking-[0.2em] font-bold text-[10px] md:text-xs text-muted-foreground opacity-80">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
+                        <span>{projectTasks.length} {projectTasks.length === 1 ? 'task' : 'tasks'}</span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2 bg-secondary/10 p-1.5 rounded-2xl border border-white/5 backdrop-blur-sm shadow-xl relative overflow-hidden group/container">
+
+                <div className="flex items-center gap-2 bg-secondary/10 p-1.5 rounded-2xl border border-white/5 backdrop-blur-sm shadow-xl relative overflow-hidden group/container w-fit md:w-auto mt-2 md:mt-0">
                     {/* Subtle sliding glow effect for the header actions */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover/container:translate-x-full transition-transform duration-1000 ease-in-out" />
 
@@ -169,7 +173,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     {(currentUser.role === 'admin' || currentUser.role === 'dev') && (
                         <Button
                             onClick={handleCreateTask}
-                            className="h-10 px-5 rounded-xl bg-primary text-primary-foreground font-bold shadow-[0_0_20px_rgba(34,197,94,0.2)] hover:shadow-[0_0_30px_rgba(34,197,94,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 relative z-10"
+                            className="h-10 px-5 rounded-xl bg-primary text-primary-foreground font-bold shadow-[0_0_20px_rgba(34,197,94,0.2)] hover:shadow-[0_0_30_rgba(34,197,94,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 relative z-10 whitespace-nowrap"
                         >
                             <Plus className="w-4 h-4 mr-2 stroke-[3px]" />
                             New Task

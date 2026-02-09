@@ -73,14 +73,26 @@ export function NotificationCenter() {
                                             n.type === 'assignment' ? <Bell className="w-4 h-4" /> :
                                                 <Check className="w-4 h-4" />}
                                     </div>
-                                    <div className="space-y-1 overflow-hidden">
-                                        <p className={cn("text-xs leading-relaxed", !n.isRead ? "text-foreground font-semibold" : "text-muted-foreground")}>
-                                            {n.content}
-                                        </p>
-                                        <p className="text-[10px] text-muted-foreground/60 italic">
-                                            {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
-                                        </p>
-                                    </div>
+                                    {(() => {
+                                        const task = n.taskId ? tasks.find(t => t.id === n.taskId) : null;
+                                        return (
+                                            <div className="space-y-0.5 overflow-hidden">
+                                                <p className={cn("text-xs leading-tight line-clamp-1", !n.isRead ? "text-foreground font-semibold" : "text-muted-foreground")}>
+                                                    {task ? task.title : n.content}
+                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    {n.taskId && (
+                                                        <p className="text-[9px] text-primary font-bold uppercase shrink-0">
+                                                            #{n.taskId.slice(0, 4)}
+                                                        </p>
+                                                    )}
+                                                    <p className="text-[9px] text-muted-foreground/60 italic">
+                                                        {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
                                     {!n.isRead && (
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary" />
                                     )}

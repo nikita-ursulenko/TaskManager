@@ -38,7 +38,7 @@ export default function DashboardPage() {
         <p className="text-lg text-muted-foreground">Here's what's happening across your projects today.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
         {/* Task Stats */}
         <Card className="relative overflow-hidden group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

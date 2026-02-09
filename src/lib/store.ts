@@ -281,7 +281,7 @@ export const useStore = create<AppState>()(
                                     user_id: memberId,
                                     actor_id: user.id,
                                     task_id: id,
-                                    content: `Task "${updatedTask.title}" status changed to ${updatedTask.status}`,
+                                    content: updatedTask.title,
                                     type: 'status_change'
                                 }]);
                             }
@@ -293,7 +293,7 @@ export const useStore = create<AppState>()(
                                 user_id: updates.assigneeId,
                                 actor_id: user.id,
                                 task_id: id,
-                                content: `You have been assigned to task: "${updatedTask.title}"`,
+                                content: updatedTask.title,
                                 type: 'assignment'
                             }]);
                         }
@@ -369,9 +369,7 @@ export const useStore = create<AppState>()(
                                 user_id: memberId,
                                 actor_id: user.id,
                                 task_id: taskId,
-                                content: isReplyToMe
-                                    ? `${get().currentUser.name} replied to your comment: "${content.slice(0, 20)}..."`
-                                    : `New comment on task: ${task.title}`,
+                                content: task.title,
                                 type: 'comment'
                             }]);
                         }

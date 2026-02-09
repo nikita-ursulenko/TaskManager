@@ -16,7 +16,8 @@ import {
     ChevronLeft,
     LogOut,
     Bell,
-    Settings
+    Settings,
+    Home
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -170,6 +171,19 @@ function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: (
                         Other
                     </h2>
                     <div className="space-y-2">
+                        <Link
+                            href="/"
+                            onClick={onClose}
+                            className={cn(
+                                "flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors",
+                                pathname === `/`
+                                    ? "bg-accent text-accent-foreground"
+                                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                            )}
+                        >
+                            <Home className="w-5 h-5" />
+                            Home
+                        </Link>
                         <Link
                             href="/finance"
                             onClick={onClose}

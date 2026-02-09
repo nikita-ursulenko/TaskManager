@@ -30,7 +30,7 @@ export default function NotificationsPage() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" asChild>
                         <Link href="/">
@@ -42,7 +42,7 @@ export default function NotificationsPage() {
                         <p className="text-muted-foreground">Stay updated with your latest activities</p>
                     </div>
                 </div>
-                <div className="bg-primary/10 text-primary px-4 py-2 rounded-2xl border border-primary/20 text-sm font-bold">
+                <div className="bg-primary/10 text-primary px-4 py-2 rounded-2xl border border-primary/20 text-sm font-bold w-fit md:w-auto self-start md:self-auto ml-14 md:ml-0">
                     {notifications.filter(n => !n.isRead).length} Unread
                 </div>
             </div>
@@ -84,18 +84,18 @@ export default function NotificationsPage() {
                                                 <Bell className="w-5 h-5" />}
                                     </div>
                                     <div className="flex-1 space-y-1.5 min-w-0">
-                                        <div className="flex items-start justify-between gap-4">
+                                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 md:gap-4">
                                             <div className="space-y-1">
                                                 <p className={cn("font-bold text-lg leading-tight", !n.isRead ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>
-                                                    {n.content}
+                                                    {task ? task.title : n.content}
                                                 </p>
                                                 {task && (
                                                     <p className="text-xs text-primary font-bold uppercase tracking-wider">
-                                                        Task: {task.title}
+                                                        TASK: #{task.id.slice(0, 4)}
                                                     </p>
                                                 )}
                                             </div>
-                                            <span className="text-xs text-muted-foreground/60 whitespace-nowrap bg-muted/50 px-2 py-1 rounded-lg">
+                                            <span className="text-xs text-muted-foreground/60 whitespace-nowrap bg-muted/50 px-2 py-1 rounded-lg self-start md:self-auto">
                                                 {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
                                             </span>
                                         </div>
