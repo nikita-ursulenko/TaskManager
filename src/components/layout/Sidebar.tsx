@@ -167,21 +167,36 @@ function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: (
 
                 <div className="px-4 mt-8">
                     <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
-                        Finance
+                        Other
                     </h2>
-                    <Link
-                        href="/finance"
-                        onClick={onClose}
-                        className={cn(
-                            "flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors",
-                            pathname === `/finance`
-                                ? "bg-accent text-accent-foreground"
-                                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-                        )}
-                    >
-                        <Wallet className="w-5 h-5" />
-                        Dashboard
-                    </Link>
+                    <div className="space-y-2">
+                        <Link
+                            href="/finance"
+                            onClick={onClose}
+                            className={cn(
+                                "flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors",
+                                pathname === `/finance`
+                                    ? "bg-accent text-accent-foreground"
+                                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                            )}
+                        >
+                            <Wallet className="w-5 h-5" />
+                            Finance Dashboard
+                        </Link>
+                        <Link
+                            href="/notifications"
+                            onClick={onClose}
+                            className={cn(
+                                "flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors",
+                                pathname === `/notifications`
+                                    ? "bg-accent text-accent-foreground"
+                                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                            )}
+                        >
+                            <Bell className="w-5 h-5" />
+                            Notifications
+                        </Link>
+                    </div>
                 </div>
             </div>
 

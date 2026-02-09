@@ -262,9 +262,42 @@ export const useStore = create<AppState>()(
                         updatedAt: data.updated_at
                     };
 
+                    const oldTask = get().tasks.find(t => t.id === id);
+
                     set((state) => ({
                         tasks: state.tasks.map((t) => t.id === id ? updatedTask : t)
                     }));
+
+                    // Notifications for status change or assignment
+                    if (oldTask) {
+                        const { data: { user } } = await supabase.auth.getUser();
+                        if (!user) return;
+
+                        // Status Change notification
+                        if (updates.status && updates.status !== oldTask.status) {
+                            const members = new Set([updatedTask.assigneeId, updatedTask.reviewerId, updatedTask.observerId].filter(id => id && id !== user.id));
+                            for (const memberId of Array.from(members)) {
+                                await supabase.from('notifications').insert([{
+                                    user_id: memberId,
+                                    actor_id: user.id,
+                                    task_id: id,
+                                    content: `Task "${updatedTask.title}" status changed to ${updatedTask.status}`,
+                                    type: 'status_change'
+                                }]);
+                            }
+                        }
+
+                        // Assignment notification
+                        if (updates.assigneeId && updates.assigneeId !== oldTask.assigneeId && updates.assigneeId !== user.id) {
+                            await supabase.from('notifications').insert([{
+                                user_id: updates.assigneeId,
+                                actor_id: user.id,
+                                task_id: id,
+                                content: `You have been assigned to task: "${updatedTask.title}"`,
+                                type: 'assignment'
+                            }]);
+                        }
+                    }
                 }
             },
 
@@ -334,6 +367,7 @@ export const useStore = create<AppState>()(
 
                             await supabase.from('notifications').insert([{
                                 user_id: memberId,
+                                actor_id: user.id,
                                 task_id: taskId,
                                 content: isReplyToMe
                                     ? `${get().currentUser.name} replied to your comment: "${content.slice(0, 20)}..."`

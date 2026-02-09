@@ -61,6 +61,7 @@ export interface Comment {
 export interface Notification {
     id: string;
     userId: string;
+    actorId?: string;
     taskId?: string;
     content: string;
     isRead: boolean;

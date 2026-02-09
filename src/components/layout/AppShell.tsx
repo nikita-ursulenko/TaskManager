@@ -138,6 +138,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     setNotifications(notificationsData.map(n => ({
                         id: n.id,
                         userId: n.user_id,
+                        actorId: n.actor_id,
                         taskId: n.task_id,
                         content: n.content,
                         isRead: n.is_read,

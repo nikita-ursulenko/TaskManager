@@ -54,7 +54,7 @@ export function NotificationCenter() {
                         </div>
                     ) : (
                         <div className="flex flex-col">
-                            {notifications.map((n) => (
+                            {notifications.slice(0, 5).map((n) => (
                                 <button
                                     key={n.id}
                                     onClick={() => handleNotificationClick(n)}
@@ -69,7 +69,9 @@ export function NotificationCenter() {
                                             n.type === 'assignment' ? "bg-green-500/10 text-green-500" :
                                                 "bg-purple-500/10 text-purple-500"
                                     )}>
-                                        {n.type === 'comment' ? <MessageSquare className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+                                        {n.type === 'comment' ? <MessageSquare className="w-4 h-4" /> :
+                                            n.type === 'assignment' ? <Bell className="w-4 h-4" /> :
+                                                <Check className="w-4 h-4" />}
                                     </div>
                                     <div className="space-y-1 overflow-hidden">
                                         <p className={cn("text-xs leading-relaxed", !n.isRead ? "text-foreground font-semibold" : "text-muted-foreground")}>
@@ -89,7 +91,12 @@ export function NotificationCenter() {
                 </div>
                 {notifications.length > 0 && (
                     <div className="p-3 border-t text-center">
-                        <Button variant="ghost" size="sm" className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary w-full"
+                            onClick={() => router.push('/notifications')}
+                        >
                             View All Notifications
                         </Button>
                     </div>
