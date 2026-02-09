@@ -46,19 +46,21 @@ export function TaskModal({ task, isOpen, onClose, role }: TaskModalProps) {
 
     const generateReport = () => {
         const project = projects.find(p => p.id === editedTask.projectId)?.name || 'Unknown Project';
-        const statusEmoji = {
+        const hasBlockers = editedTask.blockers && editedTask.blockers.trim().length > 0;
+
+        const statusLabel = {
             'New': '🆕 New',
             'In Progress': '🚧 In Progress',
             'Review': '👀 Review',
-            'Done': '✅ Done'
+            'Done': hasBlockers ? '⚠️ Done with note' : '✅ Done'
         }[editedTask.status];
 
         const report = `Task #${editedTask.id.slice(0, 4)} – ${project}\n\n` +
-            `Status: ${statusEmoji}\n` +
+            `Status: ${statusLabel}\n` +
             `What was done: ${editedTask.notes || '-'}\n\n` +
             `Evidence: ${editedTask.evidence || '-'}\n\n` +
             `Notes / blockers: ${editedTask.blockers || '-'}\n\n` +
-            `Payment: ${editedTask.budget} euro`;
+            `Payment: ${editedTask.budget} Euro`;
 
         navigator.clipboard.writeText(report);
         alert("Report copied to clipboard!");

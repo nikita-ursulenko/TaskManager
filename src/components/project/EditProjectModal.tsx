@@ -17,19 +17,29 @@ interface EditProjectModalProps {
 export function EditProjectModal({ project, isOpen, onClose, onSuccess }: EditProjectModalProps) {
     const { updateProject } = useStore();
     const [name, setName] = useState(project.name);
+    const [description, setDescription] = useState(project.description || "");
+    const [vercelUrl, setVercelUrl] = useState(project.vercelUrl || "");
+    const [githubUrl, setGithubUrl] = useState(project.githubUrl || "");
+    const [siteUrl, setSiteUrl] = useState(project.siteUrl || "");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (isOpen) {
             setName(project.name);
+            setDescription(project.description || "");
+            setVercelUrl(project.vercelUrl || "");
+            setGithubUrl(project.githubUrl || "");
+            setSiteUrl(project.siteUrl || "");
             setError(null);
         }
-    }, [isOpen, project.name]);
+    }, [isOpen, project.name, project.description, project.vercelUrl, project.githubUrl, project.siteUrl]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name.trim() || name === project.name) {
+        if (!name.trim()) return;
+
+        if (name === project.name && description === (project.description || "")) {
             onClose();
             return;
         }
@@ -37,7 +47,7 @@ export function EditProjectModal({ project, isOpen, onClose, onSuccess }: EditPr
         setIsSubmitting(true);
         setError(null);
         try {
-            const updatedProject = await updateProject(project.id, name);
+            const updatedProject = await updateProject(project.id, name, description, vercelUrl, githubUrl, siteUrl);
             if (updatedProject && updatedProject.slug !== project.slug && onSuccess) {
                 onSuccess(updatedProject.slug);
             }
@@ -97,6 +107,19 @@ export function EditProjectModal({ project, isOpen, onClose, onSuccess }: EditPr
                                         />
                                     </div>
 
+                                    <div>
+                                        <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                            Description (Technical Details)
+                                        </label>
+                                        <textarea
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            placeholder="Update site URL, login keys, storage info..."
+                                            className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-base transition-all outline-none resize-none h-32"
+                                            disabled={isSubmitting}
+                                        />
+                                    </div>
+
                                     {error && (
                                         <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm p-3 rounded-xl">
                                             {error}
@@ -116,7 +139,13 @@ export function EditProjectModal({ project, isOpen, onClose, onSuccess }: EditPr
                                         <Button
                                             type="submit"
                                             className="flex-1 rounded-xl h-11 font-semibold"
-                                            disabled={!name.trim() || isSubmitting || name === project.name}
+                                            disabled={!name.trim() || isSubmitting || (
+                                                name === project.name &&
+                                                description === (project.description || "") &&
+                                                vercelUrl === (project.vercelUrl || "") &&
+                                                githubUrl === (project.githubUrl || "") &&
+                                                siteUrl === (project.siteUrl || "")
+                                            )}
                                         >
                                             {isSubmitting ? "Saving..." : "Save Changes"}
                                         </Button>

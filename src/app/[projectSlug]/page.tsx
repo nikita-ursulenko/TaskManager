@@ -11,7 +11,9 @@ import { Plus, Trash2, Edit3 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { DeleteProjectConfirmModal } from "@/components/project/DeleteProjectConfirmModal";
 import { EditProjectModal } from "@/components/project/EditProjectModal";
+import { ProjectDetailsModal } from "@/components/project/ProjectDetailsModal";
 import { useRouter } from "next/navigation";
+import { Info } from "lucide-react";
 
 interface ProjectPageProps {
     params: Promise<{ projectSlug: string }>;
@@ -24,6 +26,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,6 +96,15 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     <p className="text-muted-foreground">{projectTasks.length} tasks</p>
                 </div>
                 <div className="flex items-center gap-3">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsDetailsModalOpen(true)}
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                    >
+                        <Info className="w-5 h-5" />
+                    </Button>
+
                     {currentUser.role === 'admin' && (
                         <>
                             <Button
@@ -101,12 +113,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                                 onClick={() => setIsEditModalOpen(true)}
                                 className="text-muted-foreground hover:text-primary transition-colors"
                             >
-                                <Plus className="w-5 h-5 rotate-45 scale-75 hidden" /> {/* spacer hack if needed */}
-                                <Trash2 className="hidden" /> {/* spacer hack if needed */}
                                 <Edit3 className="w-5 h-5" />
-                                <style jsx>{`
-                                    .rotate-45 { display: none; }
-                                `}</style>
                             </Button>
                             <Button
                                 variant="ghost"
@@ -203,6 +210,12 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleProjectRenamed}
             />
-        </div>
+
+            <ProjectDetailsModal
+                project={project}
+                isOpen={isDetailsModalOpen}
+                onClose={() => setIsDetailsModalOpen(false)}
+            />
+        </div >
     );
 }

@@ -32,4 +32,8 @@ export interface Project {
     id: string;
     name: string;
     slug: string;
+    description?: string;
+    vercelUrl?: string;
+    githubUrl?: string;
+    siteUrl?: string;
 }

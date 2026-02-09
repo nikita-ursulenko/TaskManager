@@ -14,6 +14,10 @@ interface ProjectModalProps {
 export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
     const { addProject } = useStore();
     const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [vercelUrl, setVercelUrl] = useState("");
+    const [githubUrl, setGithubUrl] = useState("");
+    const [siteUrl, setSiteUrl] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -24,8 +28,12 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
         setIsSubmitting(true);
         try {
             setError(null);
-            await addProject(name);
+            await addProject(name, description, vercelUrl, githubUrl, siteUrl);
             setName("");
+            setDescription("");
+            setVercelUrl("");
+            setGithubUrl("");
+            setSiteUrl("");
             onClose();
         } catch (err: any) {
             console.error("Failed to create project:", err);
@@ -78,6 +86,61 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
                                             onChange={(e) => setName(e.target.value)}
                                             placeholder="e.g. Design System, Mobile App..."
                                             className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-base transition-all outline-none"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                            Description (Technical Details)
+                                        </label>
+                                        <textarea
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            placeholder="Site URL, login keys, storage info, notes..."
+                                            className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-base transition-all outline-none resize-none h-32"
+                                            disabled={isSubmitting}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                                GitHub Repository
+                                            </label>
+                                            <input
+                                                type="url"
+                                                value={githubUrl}
+                                                onChange={(e) => setGithubUrl(e.target.value)}
+                                                placeholder="https://github.com/..."
+                                                className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2 text-sm transition-all outline-none"
+                                                disabled={isSubmitting}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                                Vercel Deployment
+                                            </label>
+                                            <input
+                                                type="url"
+                                                value={vercelUrl}
+                                                onChange={(e) => setVercelUrl(e.target.value)}
+                                                placeholder="https://vercel.app/..."
+                                                className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2 text-sm transition-all outline-none"
+                                                disabled={isSubmitting}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                            Live Website URL
+                                        </label>
+                                        <input
+                                            type="url"
+                                            value={siteUrl}
+                                            onChange={(e) => setSiteUrl(e.target.value)}
+                                            placeholder="https://example.com"
+                                            className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2 text-sm transition-all outline-none"
+                                            disabled={isSubmitting}
                                         />
                                     </div>
 

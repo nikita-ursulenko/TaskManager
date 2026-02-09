@@ -13,12 +13,12 @@ interface AppState {
     setProjects: (projects: Project[]) => void;
     setTasks: (tasks: Task[]) => void;
 
-    addProject: (name: string) => Promise<void>;
+    addProject: (name: string, description?: string, vercelUrl?: string, githubUrl?: string, siteUrl?: string) => Promise<void>;
     addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
     updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
     deleteTask: (id: string) => Promise<void>;
     deleteProject: (id: string) => Promise<void>;
-    updateProject: (id: string, name: string) => Promise<Project | void>;
+    updateProject: (id: string, name: string, description?: string, vercelUrl?: string, githubUrl?: string, siteUrl?: string) => Promise<Project | void>;
 
     // Profile Actions
     setUserProfile: (profile: { name: string, role: Role }) => void;
@@ -49,7 +49,7 @@ export const useStore = create<AppState>()(
             setProjects: (projects) => set({ projects }),
             setTasks: (tasks) => set({ tasks }),
 
-            addProject: async (name) => {
+            addProject: async (name, description, vercelUrl, githubUrl, siteUrl) => {
                 const supabase = createClient();
                 const slug = name.toLowerCase()
                     .trim()
@@ -59,7 +59,14 @@ export const useStore = create<AppState>()(
 
                 const { data, error } = await supabase
                     .from('projects')
-                    .insert([{ name, slug }])
+                    .insert([{
+                        name,
+                        slug,
+                        description,
+                        vercel_url: vercelUrl,
+                        github_url: githubUrl,
+                        site_url: siteUrl
+                    }])
                     .select()
                     .single();
 
@@ -91,7 +98,7 @@ export const useStore = create<AppState>()(
                 }));
             },
 
-            updateProject: async (id, name) => {
+            updateProject: async (id, name, description, vercelUrl, githubUrl, siteUrl) => {
                 const supabase = createClient();
                 const slug = name.toLowerCase()
                     .trim()
@@ -101,7 +108,14 @@ export const useStore = create<AppState>()(
 
                 const { data, error } = await supabase
                     .from('projects')
-                    .update({ name, slug })
+                    .update({
+                        name,
+                        slug,
+                        description,
+                        vercel_url: vercelUrl,
+                        github_url: githubUrl,
+                        site_url: siteUrl
+                    })
                     .eq('id', id)
                     .select()
                     .single();
