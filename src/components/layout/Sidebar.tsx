@@ -24,6 +24,7 @@ import { ProjectModal } from "@/components/project/ProjectModal";
 
 export function Sidebar() {
     const { isSidebarOpen, toggleSidebar, setSidebarOpen } = useStore();
+    const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
 
     return (
         <>
@@ -55,7 +56,11 @@ export function Sidebar() {
                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
                             className="md:hidden fixed inset-y-0 left-0 w-72 bg-card border-r z-50 overflow-y-auto"
                         >
-                            <SidebarContent onClose={() => setSidebarOpen(false)} isMobile />
+                            <SidebarContent
+                                onClose={() => setSidebarOpen(false)}
+                                isMobile
+                                onOpenProjectModal={() => setIsProjectModalOpen(true)}
+                            />
                         </motion.div>
                     </>
                 )}
@@ -68,7 +73,7 @@ export function Sidebar() {
                     isSidebarOpen ? "translate-x-0 w-72" : "-translate-x-full w-72"
                 )}
             >
-                <SidebarContent />
+                <SidebarContent onOpenProjectModal={() => setIsProjectModalOpen(true)} />
 
                 {/* Desktop Collapse Button */}
                 <div className="absolute right-4 top-6">
@@ -77,15 +82,19 @@ export function Sidebar() {
                     </Button>
                 </div>
             </aside>
+
+            <ProjectModal
+                isOpen={isProjectModalOpen}
+                onClose={() => setIsProjectModalOpen(false)}
+            />
         </>
     );
 }
 
-function SidebarContent({ onClose, isMobile }: { onClose?: () => void, isMobile?: boolean }) {
+function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: () => void, isMobile?: boolean, onOpenProjectModal: () => void }) {
     const pathname = usePathname();
     const { projects, currentUser, setRole, addProject } = useStore();
     const [isClient, setIsClient] = useState(false);
-    const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
     const router = useRouter();
 
     const handleLogout = async () => {
@@ -143,7 +152,7 @@ function SidebarContent({ onClose, isMobile }: { onClose?: () => void, isMobile?
                             variant="ghost"
                             size="lg"
                             className="w-full justify-start mt-4 text-muted-foreground pl-4 text-base"
-                            onClick={() => setIsProjectModalOpen(true)}
+                            onClick={onOpenProjectModal}
                         >
                             <Plus className="w-5 h-5 mr-3" />
                             Add Project
@@ -151,10 +160,7 @@ function SidebarContent({ onClose, isMobile }: { onClose?: () => void, isMobile?
                     )}
                 </div>
 
-                <ProjectModal
-                    isOpen={isProjectModalOpen}
-                    onClose={() => setIsProjectModalOpen(false)}
-                />
+                {/* Modal removed from here and moved to Sidebar root */}
 
                 <div className="px-4 mt-8">
                     <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">

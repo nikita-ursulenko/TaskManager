@@ -18,9 +18,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         setIsClient(true);
+        const supabase = createClient();
 
         async function fetchData() {
-            const supabase = createClient();
             const { data: { user } } = await supabase.auth.getUser();
 
             if (user) {
@@ -43,7 +43,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
                 if (projectsData) {
                     const projectsWithSlugs = projectsData.map(p => ({
-                        ...p,
+                        id: p.id,
+                        name: p.name,
+                        description: p.description,
+                        vercelUrl: p.vercel_url,
+                        githubUrl: p.github_url,
+                        siteUrl: p.site_url,
                         slug: p.slug || p.name.toLowerCase()
                             .trim()
                             .replace(/[^\w\s-]/g, '')
@@ -82,7 +87,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             setIsLoading(false);
         }
 
+        // Listen for auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+                fetchData();
+            } else if (event === 'SIGNED_OUT') {
+                // Clear state on sign out if needed, though redirect usually handles it
+                setProjects([]);
+                setTasks([]);
+                setIsLoading(false);
+            }
+        });
+
+        // Initial check if we already have a session
         fetchData();
+
+        return () => {
+            subscription.unsubscribe();
+        };
     }, [setUserProfile, setProjects, setTasks]);
 
     const isLoginPage = pathname === "/login";

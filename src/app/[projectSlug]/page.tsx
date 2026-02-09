@@ -99,7 +99,13 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setIsDetailsModalOpen(true)}
+                        onClick={() => {
+                            if (currentUser.role === 'admin') {
+                                setIsEditModalOpen(true);
+                            } else {
+                                setIsDetailsModalOpen(true);
+                            }
+                        }}
                         className="text-muted-foreground hover:text-primary transition-colors"
                     >
                         <Info className="w-5 h-5" />
@@ -107,14 +113,6 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
                     {currentUser.role === 'admin' && (
                         <>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setIsEditModalOpen(true)}
-                                className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                                <Edit3 className="w-5 h-5" />
-                            </Button>
                             <Button
                                 variant="ghost"
                                 size="icon"

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useStore } from "@/lib/store";
 import { Project } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { X, Edit3 } from "lucide-react";
+import { X, Edit3, Globe, Database, ExternalLink, AlignLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface EditProjectModalProps {
@@ -39,7 +39,13 @@ export function EditProjectModal({ project, isOpen, onClose, onSuccess }: EditPr
         e.preventDefault();
         if (!name.trim()) return;
 
-        if (name === project.name && description === (project.description || "")) {
+        if (
+            name === project.name &&
+            description === (project.description || "") &&
+            vercelUrl === (project.vercelUrl || "") &&
+            githubUrl === (project.githubUrl || "") &&
+            siteUrl === (project.siteUrl || "")
+        ) {
             onClose();
             return;
         }
@@ -76,7 +82,7 @@ export function EditProjectModal({ project, isOpen, onClose, onSuccess }: EditPr
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="w-full max-w-md bg-card border shadow-2xl rounded-2xl overflow-hidden pointer-events-auto"
+                            className="w-full max-w-xl bg-card border shadow-2xl rounded-2xl overflow-hidden pointer-events-auto"
                         >
                             <div className="p-6">
                                 <div className="flex items-center justify-between mb-6">
@@ -91,33 +97,103 @@ export function EditProjectModal({ project, isOpen, onClose, onSuccess }: EditPr
                                     </Button>
                                 </div>
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div>
-                                        <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                            Project Name
-                                        </label>
-                                        <input
-                                            autoFocus
-                                            type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            placeholder="Enter project name..."
-                                            className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-base transition-all outline-none"
-                                            disabled={isSubmitting}
-                                        />
-                                    </div>
+                                <form onSubmit={handleSubmit} className="space-y-8">
+                                    <div className="space-y-6">
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+                                                <AlignLeft className="w-3.5 h-3.5" />
+                                                General Information
+                                            </div>
 
-                                    <div>
-                                        <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                            Description (Technical Details)
-                                        </label>
-                                        <textarea
-                                            value={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                            placeholder="Update site URL, login keys, storage info..."
-                                            className="w-full bg-muted/30 border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-base transition-all outline-none resize-none h-32"
-                                            disabled={isSubmitting}
-                                        />
+                                            <div>
+                                                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                                    Project Name
+                                                </label>
+                                                <div className="relative group">
+                                                    <input
+                                                        autoFocus
+                                                        type="text"
+                                                        value={name}
+                                                        onChange={(e) => setName(e.target.value)}
+                                                        placeholder="Enter project name..."
+                                                        className="w-full bg-muted/30 border border-transparent focus:border-primary/50 focus:ring-4 focus:ring-primary/5 rounded-xl px-4 py-3 text-base transition-all outline-none"
+                                                        disabled={isSubmitting}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                                    Description (Technical Details)
+                                                </label>
+                                                <textarea
+                                                    value={description}
+                                                    onChange={(e) => setDescription(e.target.value)}
+                                                    placeholder="Update site URL, login keys, storage info..."
+                                                    className="w-full bg-muted/30 border border-transparent focus:border-primary/50 focus:ring-4 focus:ring-primary/5 rounded-xl px-4 py-3 text-base transition-all outline-none resize-none h-32"
+                                                    disabled={isSubmitting}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+                                                <ExternalLink className="w-3.5 h-3.5" />
+                                                Resources & Links
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                                        GitHub Repository
+                                                    </label>
+                                                    <div className="relative">
+                                                        <Database className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                                                        <input
+                                                            type="url"
+                                                            value={githubUrl}
+                                                            onChange={(e) => setGithubUrl(e.target.value)}
+                                                            placeholder="https://github.com/..."
+                                                            className="w-full bg-muted/30 border border-transparent focus:border-primary/50 focus:ring-4 focus:ring-primary/5 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all outline-none"
+                                                            disabled={isSubmitting}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                                        Vercel Deployment
+                                                    </label>
+                                                    <div className="relative">
+                                                        <ExternalLink className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                                                        <input
+                                                            type="url"
+                                                            value={vercelUrl}
+                                                            onChange={(e) => setVercelUrl(e.target.value)}
+                                                            placeholder="https://vercel.app/..."
+                                                            className="w-full bg-muted/30 border border-transparent focus:border-primary/50 focus:ring-4 focus:ring-primary/5 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all outline-none"
+                                                            disabled={isSubmitting}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                                                    Live Website URL
+                                                </label>
+                                                <div className="relative">
+                                                    <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                                                    <input
+                                                        type="url"
+                                                        value={siteUrl}
+                                                        onChange={(e) => setSiteUrl(e.target.value)}
+                                                        placeholder="https://example.com"
+                                                        className="w-full bg-muted/30 border border-transparent focus:border-primary/50 focus:ring-4 focus:ring-primary/5 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all outline-none"
+                                                        disabled={isSubmitting}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {error && (

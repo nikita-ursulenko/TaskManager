@@ -75,8 +75,17 @@ export const useStore = create<AppState>()(
                 }
 
                 if (data) {
+                    const newProject: Project = {
+                        id: data.id,
+                        name: data.name,
+                        slug: data.slug,
+                        description: data.description,
+                        vercelUrl: data.vercel_url,
+                        githubUrl: data.github_url,
+                        siteUrl: data.site_url
+                    };
                     set((state) => ({
-                        projects: [...state.projects, data]
+                        projects: [...state.projects, newProject]
                     }));
                 }
             },
@@ -125,10 +134,19 @@ export const useStore = create<AppState>()(
                 }
 
                 if (data) {
+                    const updatedProject: Project = {
+                        id: data.id,
+                        name: data.name,
+                        slug: data.slug,
+                        description: data.description,
+                        vercelUrl: data.vercel_url,
+                        githubUrl: data.github_url,
+                        siteUrl: data.site_url
+                    };
                     set((state) => ({
-                        projects: state.projects.map((p) => p.id === id ? data : p)
+                        projects: state.projects.map((p) => p.id === id ? updatedProject : p)
                     }));
-                    return data;
+                    return updatedProject;
                 }
             },
 
