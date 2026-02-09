@@ -241,11 +241,14 @@ function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: (
 
                     <div className="flex items-center justify-between mt-5 pt-3 border-t border-white/5 relative z-10">
                         <div className="flex items-center gap-1">
-                            <NotificationCenter />
+                            <NotificationCenter onClose={onClose} />
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => router.push('/settings')}
+                                onClick={() => {
+                                    router.push('/settings');
+                                    if (onClose) onClose();
+                                }}
                                 className="w-9 h-9 rounded-xl hover:bg-white/5 text-muted-foreground hover:text-white transition-all group/btn"
                                 title="Account Settings"
                             >

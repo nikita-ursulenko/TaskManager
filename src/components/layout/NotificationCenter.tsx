@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 
-export function NotificationCenter() {
+export function NotificationCenter({ onClose }: { onClose?: () => void }) {
     const { notifications, markAsRead, tasks, projects } = useStore();
     const router = useRouter();
 
@@ -27,6 +27,7 @@ export function NotificationCenter() {
                 router.push(`/${project.slug}/task/${n.taskId}`);
             }
         }
+        if (onClose) onClose();
     };
 
     return (
@@ -107,7 +108,10 @@ export function NotificationCenter() {
                             variant="ghost"
                             size="sm"
                             className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary w-full"
-                            onClick={() => router.push('/notifications')}
+                            onClick={() => {
+                                router.push('/notifications');
+                                if (onClose) onClose();
+                            }}
                         >
                             View All Notifications
                         </Button>
