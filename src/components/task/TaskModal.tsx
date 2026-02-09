@@ -290,11 +290,33 @@ export function TaskModal({ task, isOpen, onClose, role }: TaskModalProps) {
                                         <div>
                                             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-2 px-1">Attachments</label>
                                             <div className="grid grid-cols-2 gap-3 p-1">
-                                                {editedTask.attachments.map((url, i) => (
-                                                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="group relative aspect-video rounded-xl overflow-hidden border border-border/50 hover:border-primary transition-all">
-                                                        <img src={url} alt="Attachment" className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" />
+                                                {editedTask.attachments.map((att, i) => (
+                                                    <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="group relative aspect-video rounded-xl overflow-hidden border border-border/50 hover:border-primary transition-all">
+                                                        <img src={att.url} alt={att.name || "Attachment"} className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" />
                                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                            <ExternalLink className="w-5 h-5 text-white" />
+                                                            <div className="text-center">
+                                                                <ExternalLink className="w-5 h-5 text-white mx-auto mb-1" />
+                                                                <span className="text-[10px] text-white font-bold px-2 truncate block max-w-full">{att.name}</span>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {editedTask.executionAttachments && editedTask.executionAttachments.length > 0 && (
+                                        <div>
+                                            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-2 px-1">Execution Attachments</label>
+                                            <div className="grid grid-cols-2 gap-3 p-1">
+                                                {editedTask.executionAttachments.map((att, i) => (
+                                                    <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="group relative aspect-video rounded-xl overflow-hidden border border-border/50 hover:border-primary transition-all">
+                                                        <img src={att.url} alt={att.name || "Execution Attachment"} className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" />
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <div className="text-center">
+                                                                <ExternalLink className="w-5 h-5 text-white mx-auto mb-1" />
+                                                                <span className="text-[10px] text-white font-bold px-2 truncate block max-w-full">{att.name}</span>
+                                                            </div>
                                                         </div>
                                                     </a>
                                                 ))}
