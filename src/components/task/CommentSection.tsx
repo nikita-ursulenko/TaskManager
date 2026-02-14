@@ -80,7 +80,7 @@ export function CommentSection({ taskId }: { taskId: string }) {
                     </div>
 
                     <div className={cn(
-                        "max-w-[85%] flex flex-col group",
+                        "max-w-[75%] md:max-w-[85%] flex flex-col group min-w-0",
                         isMe ? "items-end" : "items-start"
                     )}>
                         {/* Meta info above bubble */}
@@ -98,7 +98,7 @@ export function CommentSection({ taskId }: { taskId: string }) {
 
                         {/* Message Bubble */}
                         <div className={cn(
-                            "p-4 rounded-2xl text-sm leading-relaxed relative border shadow-sm transition-all",
+                            "p-4 rounded-2xl text-sm leading-relaxed relative border shadow-sm transition-all break-words break-all overflow-hidden min-w-0",
                             isMe
                                 ? "bg-primary text-primary-foreground border-primary/20 rounded-tr-none"
                                 : "bg-card border-border/50 rounded-tl-none"
@@ -121,7 +121,7 @@ export function CommentSection({ taskId }: { taskId: string }) {
                                 </div>
                             )}
 
-                            <div className="whitespace-pre-wrap">{comment.content}</div>
+                            <div className="whitespace-pre-wrap break-words break-all">{comment.content}</div>
 
                             {/* Reply Button (Only on main level or limited depth) */}
                             {depth < 2 && (
@@ -144,7 +144,7 @@ export function CommentSection({ taskId }: { taskId: string }) {
                 {itemReplies.length > 0 && (
                     <div className={cn(
                         "space-y-4 pt-2 border-l-2 border-primary/10 pl-4",
-                        isMe ? "mr-12" : "ml-12"
+                        isMe ? "mr-2 md:mr-12" : "ml-2 md:ml-12"
                     )}>
                         {itemReplies.map(reply => renderComment(reply, depth + 1))}
                     </div>
@@ -178,7 +178,7 @@ export function CommentSection({ taskId }: { taskId: string }) {
                 )}
 
                 {/* Sticky Input Area */}
-                <div className="space-y-4 pt-4 sticky bottom-8 bg-background/95 backdrop-blur-xl p-3 rounded-3xl border shadow-2xl z-20">
+                <div className="sticky bottom-0 z-20 pb-safe bg-background/95 backdrop-blur-xl p-2 md:p-0">
                     <AnimatePresence>
                         {replyTo && (
                             <motion.div
@@ -187,7 +187,7 @@ export function CommentSection({ taskId }: { taskId: string }) {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="overflow-hidden"
                             >
-                                <div className="flex items-center justify-between bg-primary/10 px-4 py-3 rounded-2xl text-xs border border-primary/20 mb-2">
+                                <div className="flex items-center justify-between bg-primary/10 px-4 py-3 rounded-2xl text-xs border border-primary/20 mb-2 mx-2 md:mx-0">
                                     <div className="flex items-center gap-3">
                                         <CornerDownRight className="w-4 h-4 text-primary" />
                                         <div className="flex flex-col">
@@ -212,7 +212,7 @@ export function CommentSection({ taskId }: { taskId: string }) {
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
                             placeholder={replyTo ? "Write your reply..." : "Share your thoughts..."}
-                            className="w-full bg-muted/20 border border-transparent focus:border-primary/30 focus:bg-background rounded-2xl p-5 pr-16 text-sm transition-all focus:outline-none resize-none min-h-[120px] shadow-inner leading-relaxed"
+                            className="w-full bg-muted/20 border border-transparent focus:border-primary/30 focus:bg-background rounded-2xl p-4 md:p-5 pr-14 md:pr-16 text-sm transition-all focus:outline-none resize-none min-h-[60px] md:min-h-[120px] shadow-inner leading-relaxed"
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();
@@ -225,11 +225,11 @@ export function CommentSection({ taskId }: { taskId: string }) {
                             size="icon"
                             disabled={!newComment.trim() || isSubmitting}
                             className={cn(
-                                "absolute right-4 bottom-4 w-12 h-12 rounded-xl shadow-xl transition-all active:scale-90 neon-glow",
+                                "absolute right-2 bottom-2 md:right-4 md:bottom-4 w-10 h-10 md:w-12 md:h-12 rounded-xl shadow-xl transition-all active:scale-90 neon-glow",
                                 isSubmitting && "opacity-50"
                             )}
                         >
-                            <Send className="w-5 h-5" />
+                            <Send className="w-4 h-4 md:w-5 md:h-5" />
                         </Button>
                     </form>
                 </div>

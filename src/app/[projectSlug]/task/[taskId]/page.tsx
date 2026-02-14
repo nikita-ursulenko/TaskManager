@@ -115,7 +115,7 @@ export default function TaskPage({ params }: TaskPageProps) {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl mx-auto space-y-8 pb-32"
+            className="max-w-4xl mx-auto space-y-8 pb-32 px-4"
         >
             {/* Navigation Header */}
             <div className="flex items-center justify-between">
