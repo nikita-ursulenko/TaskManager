@@ -4,12 +4,14 @@ import { useStore } from "@/lib/store";
 import { formatCurrency } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { TrendingUp, Clock, CheckCircle2 } from "lucide-react";
+import { TrendingUp, Clock, CheckCircle2, Loader2, Check } from "lucide-react";
 
 export default function FinancePage() {
-    const { tasks } = useStore();
+    const { tasks, updateTask } = useStore();
     const [isClient, setIsClient] = useState(false);
+    const [isPaying, setIsPaying] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
@@ -21,6 +23,20 @@ export default function FinancePage() {
     const totalPaid = doneTasks.filter(t => t.isPaid).reduce((acc, t) => acc + t.budget, 0);
     const totalPending = doneTasks.filter(t => !t.isPaid).reduce((acc, t) => acc + t.budget, 0);
     const totalEarned = totalPaid + totalPending;
+
+    const handleMarkPaid = async () => {
+        if (totalPending === 0) return;
+
+        setIsPaying(true);
+        try {
+            const pendingTasks = doneTasks.filter(t => !t.isPaid);
+            await Promise.all(pendingTasks.map(t => updateTask(t.id, { isPaid: true })));
+        } catch (error) {
+            console.error("Failed to mark paid:", error);
+        } finally {
+            setIsPaying(false);
+        }
+    };
 
     return (
         <div className="space-y-8">
@@ -56,16 +72,29 @@ export default function FinancePage() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-yellow-500/5 border-yellow-500/20">
+                <Card className="bg-yellow-500/5 border-yellow-500/20 relative overflow-hidden">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-yellow-500">Pending Payment</CardTitle>
                         <Clock className="h-4 w-4 text-yellow-500" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-yellow-500">{formatCurrency(totalPending)}</div>
-                        <p className="text-xs text-yellow-500/80">
+                        <p className="text-xs text-yellow-500/80 mb-4">
                             Completed tasks awaiting payment
                         </p>
+                        <Button
+                            onClick={handleMarkPaid}
+                            disabled={isPaying || totalPending === 0}
+                            size="sm"
+                            className="w-full bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30 border border-yellow-500/20 shadow-none hover:shadow-sm transition-all"
+                        >
+                            {isPaying ? (
+                                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            ) : (
+                                <Check className="w-4 h-4 mr-2" />
+                            )}
+                            Mark as Paid
+                        </Button>
                     </CardContent>
                 </Card>
             </div>
