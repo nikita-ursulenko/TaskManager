@@ -510,7 +510,6 @@ export default function TaskPage({ params }: TaskPageProps) {
                                             checked={editedTask.isPaid || false}
                                             onChange={(e) => setEditedTask({ ...editedTask, isPaid: e.target.checked })}
                                             className="accent-primary w-5 h-5 rounded-md border-border transition-all"
-                                            disabled={currentUser.role !== 'admin'}
                                         />
                                     </div>
                                 </label>
