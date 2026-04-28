@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { TrendingUp, Clock, CheckCircle2, Loader2, Check } from "lucide-react";
+import Link from "next/link";
 
 export default function FinancePage() {
-    const { tasks, updateTask } = useStore();
+    const { tasks, updateTask, projects } = useStore();
     const [isClient, setIsClient] = useState(false);
     const [isPaying, setIsPaying] = useState(false);
 
@@ -107,26 +108,43 @@ export default function FinancePage() {
                     {doneTasks.length === 0 ? (
                         <div className="p-8 text-center text-muted-foreground text-sm">No completed tasks yet.</div>
                     ) : (
-                        doneTasks.map(task => (
-                            <div key={task.id} className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
-                                <div>
-                                    <div className="font-medium text-sm">{task.title}</div>
-                                    <div className="text-xs text-muted-foreground flex items-center gap-2">
-                                        <span>#{task.id.slice(0, 4)}</span>
-                                        <span>•</span>
-                                        <span>{new Date(task.updatedAt).toLocaleDateString()}</span>
-                                    </div>
-                                </div>
+                        doneTasks.map(task => {
+                            const project = projects.find(p => p.id === task.projectId);
+                            const taskUrl = project ? `/${project.slug}/task/${task.id}` : '#';
+                            
+                            return (
+                                <div key={task.id} className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
+                                    <Link href={taskUrl} className="flex-1 block hover:opacity-80">
+                                        <div className="font-medium text-sm hover:underline">{task.title}</div>
+                                        <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
+                                            {project && (
+                                                <>
+                                                    <span className="truncate max-w-[120px]">{project.name}</span>
+                                                    <span>•</span>
+                                                </>
+                                            )}
+                                            <span>#{task.id.slice(0, 4)}</span>
+                                            <span>•</span>
+                                            <span>{new Date(task.updatedAt).toLocaleDateString()}</span>
+                                        </div>
+                                    </Link>
                                 <div className="flex items-center gap-4">
-                                    <Badge variant={task.isPaid ? 'success' : 'warning'}>
-                                        {task.isPaid ? 'PAID' : 'PENDING'}
-                                    </Badge>
+                                    <button 
+                                        onClick={() => updateTask(task.id, { isPaid: !task.isPaid })}
+                                        className="focus:outline-none transition-transform active:scale-95"
+                                        title={task.isPaid ? "Mark as pending" : "Mark as paid"}
+                                    >
+                                        <Badge variant={task.isPaid ? 'success' : 'warning'} className="cursor-pointer hover:opacity-80">
+                                            {task.isPaid ? 'PAID' : 'PENDING'}
+                                        </Badge>
+                                    </button>
                                     <span className="font-mono font-bold w-20 text-right">
                                         {formatCurrency(task.budget)}
                                     </span>
                                 </div>
                             </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </div>
