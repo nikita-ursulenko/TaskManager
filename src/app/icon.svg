@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-  <g>
-    <path d="M10.36,31.81c-.97-2.07-1.51-4.38-1.51-6.81,0-8.91,7.25-16.15,16.15-16.15,2.43,0,4.74.54,6.81,1.51l8.58-3.52c-4.16-3.53-9.53-5.66-15.39-5.66C11.86,1.18,1.18,11.86,1.18,25c0,5.83,2.11,11.17,5.6,15.32l3.59-8.51Z" fill="#2c2d38"/>
-    <path d="M43.23,9.68l-3.59,8.51c.97,2.07,1.51,4.38,1.51,6.81,0,8.91-7.25,16.15-16.15,16.15-2.43,0-4.74-.54-6.81-1.51l-8.58,3.52c4.16,3.53,9.53,5.66,15.39,5.66,13.14,0,23.82-10.69,23.82-23.82,0-5.83-2.11-11.17-5.6-15.32Z" fill="#2c2d38"/>
-  </g>
-  <circle cx="25" cy="25" r="7.52" fill="#2c2d38"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="8" fill="#0A0A0A"/>
+  <rect x="6" y="6" width="6" height="6" rx="1" fill="#2DFFC0"/>
+  <rect x="6" y="14" width="6" height="12" rx="1" fill="#2DFFC0" fill-opacity="0.3"/>
+  <rect x="14" y="6" width="6" height="14" rx="1" fill="#2DFFC0" fill-opacity="0.6"/>
+  <rect x="14" y="22" width="6" height="4" rx="1" fill="#2DFFC0"/>
+  <rect x="22" y="6" width="6" height="20" rx="1" fill="#2DFFC0" fill-opacity="0.4"/>
 </svg>
