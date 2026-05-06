@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 TaskManager
 
-## Getting Started
+**TaskManager** — это современное и высокопроизводительное веб-приложение для управления задачами, разработанное с использованием передовых технологий экосистемы React. Приложение предоставляет удобный интерфейс (включая Kanban-доски с Drag & Drop), безопасную авторизацию и надежное хранение данных.
 
-First, run the development server:
+## 🛠 Технологический стек
+
+Проект построен на базе самых современных инструментов веб-разработки:
+
+- **Фреймворк:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Библиотека интерфейсов:** [React 19](https://react.dev/)
+- **Стилизация:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **База данных и Backend:** [Supabase](https://supabase.com/) (включая `@supabase/ssr` для серверного рендеринга)
+- **Управление состоянием:** [Zustand](https://zustand-demo.pmnd.rs/)
+- **Анимации и UI:** [Framer Motion](https://www.framer.com/motion/)
+- **Drag & Drop:** [@hello-pangea/dnd](https://github.com/hello-pangea/dnd) (современный форк react-beautiful-dnd)
+- **Компоненты интерфейса:** Паттерны Radix UI (`@radix-ui/react-popover`), иконки [Lucide React](https://lucide.dev/), а также утилиты `clsx`, `tailwind-merge` и `class-variance-authority`.
+- **Работа с датами:** [date-fns](https://date-fns.org/)
+
+## ✨ Ключевые возможности
+
+- 🗂 **Комплексное управление:** Создание, редактирование, удаление проектов и задач.
+- 🖐 **Интерактивный Kanban:** Интуитивно понятное перемещение задач между колонками и статусами благодаря встроенному Drag & Drop.
+- 🔐 **Аутентификация и безопасность:** Полноценная интеграция с Supabase Auth для защиты маршрутов и пользовательских данных.
+- ⚡ **Оптимизация и скорость:** Использование Server Components и оптимизированного рендеринга от Next.js.
+- 🎨 **Современный UI/UX:** Адаптивный дизайн, плавные микро-анимации, поддержка всплывающих окон и продуманная типографика.
+
+## 🚀 Быстрый старт (Локальная разработка)
+
+### 1. Требования
+
+Убедитесь, что у вас установлены:
+- [Node.js](https://nodejs.org/) (версия 20 или выше)
+- Пакетный менеджер: `npm`, `yarn`, `pnpm` или `bun`
+
+### 2. Установка зависимостей
+
+В корневой папке проекта выполните одну из команд:
+
+```bash
+npm install
+# или
+yarn install
+# или
+pnpm install
+```
+
+### 3. Настройка переменных окружения
+
+В проекте используется `.env`, но для локальной работы рекомендуется создать `.env.local` в корневой директории и добавить ваши ключи доступа к проекту Supabase:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=ваша_ссылка_на_проект_supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY=ваш_anon_key_от_supabase
+```
+
+### 4. Запуск сервера для разработки
 
 ```bash
 npm run dev
-# or
+# или
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+После успешного запуска откройте [http://localhost:3000](http://localhost:3000) в вашем браузере, чтобы увидеть приложение.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Структура проекта
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/src/app` — Основной роутинг приложения (Next.js App Router).
+- `/src/components` — Переиспользуемые UI-компоненты и логические блоки интерфейса.
+- `/src/lib` — Утилиты, настройки и общая конфигурация (включая инициализацию клиента Supabase).
+- `/src/store` — Глобальное управление состоянием (через Zustand).
+- `/public` — Статические файлы, изображения и глобальные стили.
 
-## Learn More
+## 📜 Скрипты (Scripts)
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` — Запуск проекта в режиме локальной разработки.
+- `npm run build` — Сборка оптимизированной production-версии проекта.
+- `npm run start` — Запуск собранного production-сервера.
+- `npm run lint` — Запуск линтера ESLint для проверки качества кода.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Разработано с фокусом на производительность и качественный пользовательский опыт.*
