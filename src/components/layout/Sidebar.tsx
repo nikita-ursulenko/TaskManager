@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -118,7 +119,7 @@ function SidebarContent({ onClose, isMobile, onOpenProjectModal }: { onClose?: (
         <div className="flex flex-col h-full w-full">
             <div className="p-6 border-b flex items-center justify-between">
                 <Link href="/" className="font-bold text-2xl tracking-tight flex items-center gap-3" onClick={onClose}>
-                    <LayoutDashboard className="w-7 h-7 text-primary" />
+                    <Image src="/logo.svg" alt="Task Blazar Logo" width={32} height={32} className="w-8 h-8 drop-shadow-md" />
                     Task Blazar
                 </Link>
                 {isMobile && (

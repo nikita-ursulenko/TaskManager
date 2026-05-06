@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Loader2 } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -98,8 +99,8 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-4">
             <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-xl border shadow-lg">
                 <div className="text-center">
-                    <div className="mx-auto w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4">
-                        <LayoutDashboard className="w-6 h-6 text-primary" />
+                    <div className="mx-auto w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                        <Image src="/logo.svg" alt="Task Blazar Logo" width={48} height={48} className="drop-shadow-lg" />
                     </div>
                     <h2 className="text-3xl font-bold tracking-tight">
                         {isSignUp ? "Create an account" : "Welcome back"}
